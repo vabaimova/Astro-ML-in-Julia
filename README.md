@@ -14,12 +14,12 @@ Keywords Extracted from Kepler FITS Files
 - HMAG [mag] H band magnitude from 2MASS
 - KMAG [mag] K band magnitude from 2MASS
 - KEPMAG [mag] Kepler magnitude (Kp)
-- GRCOLOR [mag] &(g-r) color, SDSS bands
-- JKCOLOR [mag] &(J-K) color, 2MASS bands
-- GKCOLOR [mag] &(g-K) color, SDSS g - 2MASS K
+- GRCOLOR [mag] <(g-r) color, SDSS bands
+- JKCOLOR [mag] <(J-K) color, 2MASS bands
+- GKCOLOR [mag] <(g-K) color, SDSS g - 2MASS K
 - TEFF [K] Effective temperature
 - LOGG [cm/s2] log10 surface gravity
 - FEH [log10([Fe/H])] metallicity
 - EBMINUSV [mag] E(B-V) redenning
-- AV [mag] A&_v extinction
+- AV [mag] A<_v extinction
 - RADIUS [solar radii] stellar radius
