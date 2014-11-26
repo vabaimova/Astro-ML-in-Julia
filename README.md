@@ -3,7 +3,7 @@ Astro-ML-in-Julia
 
 Using machine learning methods in Julia to analyze astronomical time series data.
 
-Keywords Extracted from Kepler FITS Files
+##Keywords Extracted from Kepler FITS Files
 
 - GMAG [mag] SDSS g band magnitude
 - RMAG [mag] SDSS r band magnitude
