@@ -33,6 +33,24 @@ function getHeaderData(fileName::String, keywordList::String)
 
 #    Used for testing the accuracy of code
 #    println("Star Data: ", starData)
+    
+    return starData
 
+end
+
+
+function headerDataForDir(dirName::String, keywordList::String)
+
+    fitsFiles = readdir(dirName)
+    headerData = Float64[]
+
+    for file in fitsFiles
+        fileName = "/home/CREATIVE_STATION/lc_foo/" * file
+        println("Reading file: ", fileName)
+        data = getHeaderData(fileName,keywordList)
+#        append!(headerData, [data])
+    end
+#    
+#    println("Header data: ", headerData)
 end
 
