@@ -42,10 +42,14 @@ function getHeaderData(fileName::String, keywordList::String)
 #    println("Star Data: ", starData)
     
     return starData
-
 end
 
 
+
+## This function will probably not be used in lieu of a function
+## that will do the same thing that this one does
+## except that it will take a function that contains the file names of just
+## one instance of any particular Kepler ID number
 function headerDataForDir(dirName::String, keywordList::String)
 
     fitsFiles = readdir(dirName)
@@ -58,7 +62,36 @@ function headerDataForDir(dirName::String, keywordList::String)
         println("Data: ", data)
         append!(headerData, [data])
     end
-    
-    println("Header data: ", headerData)
+
+## Used for testing the code    
+#    println("Header data: ", headerData)
+
+    return headerData
+end
+
+
+
+## This function does the same thing as headerDataForDir, except
+## it takes a file that contains a list of FITS files that are unique
+## instances of their Kepler IDs
+function headerDataForUniqueKIDs(listOfFiles::String, keywordList::String)
+
+    fileList = open(listOfFiles,"r")
+    files = readdlm(listOfFiles,String)
+    files = map((x) -> normalize_string(x),files)
+
+    headerData = Float64[]
+
+    for file in files
+        # This is just for testing
+        # The actual file names should include the whole path
+        fileName = "/home/CREATIVE_STATION/lc_foo/" * file
+#        println("Reading file: ", fileName)
+        data = getHeaderData(fileName,keywordList)
+        println("Data: ", data)
+        append!(headerData, [data])
+    end
+
+    return headerData
 end
 
