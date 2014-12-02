@@ -5,6 +5,7 @@ Using machine learning methods in Julia to analyze astronomical time series data
 
 ##Keywords Extracted from Kepler FITS Files
 
+- KEPLERID unique Kepler target identifier
 - GMAG [mag] SDSS g band magnitude
 - RMAG [mag] SDSS r band magnitude
 - IMAG [mag] SDSS i band magnitude
