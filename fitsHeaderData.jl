@@ -71,6 +71,9 @@ end
 
 
 
+# This is assuming that there is a function that creates a file
+# That lists the first instances of a particular KID in a FITS file
+
 ## This function does the same thing as headerDataForDir, except
 ## it takes a file that contains a list of FITS files that are unique
 ## instances of their Kepler IDs
@@ -94,4 +97,7 @@ function headerDataForUniqueKIDs(listOfFiles::String, keywordList::String)
 
     return headerData
 end
+
+
+
 
