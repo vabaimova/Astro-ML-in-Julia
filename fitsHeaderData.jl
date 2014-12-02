@@ -27,6 +27,13 @@ function getHeaderData(fileName::String, keywordList::String)
     for keyword in keywords
         ## Access the value stored in the header at the keyword
         data = header[keyword] 
+
+        ## Test if there is not a value
+        ## If no value exists, replace with -9999
+        if typeof(data) == Nothing
+            data = -9999
+        end
+
         ## Append the acquired value to the data array
         append!(starData,[data])
     end
@@ -46,11 +53,12 @@ function headerDataForDir(dirName::String, keywordList::String)
 
     for file in fitsFiles
         fileName = "/home/CREATIVE_STATION/lc_foo/" * file
-        println("Reading file: ", fileName)
+#        println("Reading file: ", fileName)
         data = getHeaderData(fileName,keywordList)
-#        append!(headerData, [data])
+        println("Data: ", data)
+        append!(headerData, [data])
     end
-#    
-#    println("Header data: ", headerData)
+    
+    println("Header data: ", headerData)
 end
 
