@@ -50,13 +50,14 @@ end
 ## that will do the same thing that this one does
 ## except that it will take a function that contains the file names of just
 ## one instance of any particular Kepler ID number
-function headerDataForDir(dirName::String, keywordList::String)
+function headerDataForDir(dirName::String,keywordList::String,beginPath::String)
 
     fitsFiles = readdir(dirName)
     headerData = Float64[]
 
     for file in fitsFiles
-        fileName = "/home/CREATIVE_STATION/lc_foo/" * file
+##        fileName = "/home/CREATIVE_STATION/lc_foo/" * file
+        fileName = beginPath * file
 #        println("Reading file: ", fileName)
         data = getHeaderData(fileName,keywordList)
         println("Data: ", data)
@@ -71,10 +72,13 @@ end
 
 
 
+# This is assuming that there is a function that creates a file
+# That lists the first instances of a particular KID in a FITS file
+
 ## This function does the same thing as headerDataForDir, except
 ## it takes a file that contains a list of FITS files that are unique
 ## instances of their Kepler IDs
-function headerDataForUniqueKIDs(listOfFiles::String, keywordList::String)
+function headerDataForUniqueKIDs(listOfFiles::String,keywordList::String,beginPath::String)
 
     fileList = open(listOfFiles,"r")
     files = readdlm(listOfFiles,String)
@@ -83,9 +87,8 @@ function headerDataForUniqueKIDs(listOfFiles::String, keywordList::String)
     headerData = Float64[]
 
     for file in files
-        # This is just for testing
-        # The actual file names should include the whole path
-        fileName = "/home/CREATIVE_STATION/lc_foo/" * file
+##        fileName = "/home/CREATIVE_STATION/lc_foo/" * file
+        fileName = beginPath * file
 #        println("Reading file: ", fileName)
         data = getHeaderData(fileName,keywordList)
         println("Data: ", data)
@@ -94,4 +97,7 @@ function headerDataForUniqueKIDs(listOfFiles::String, keywordList::String)
 
     return headerData
 end
+
+
+
 
