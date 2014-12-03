@@ -10,6 +10,7 @@
 ## to one big file where each row is a star
 
 using FITSIO
+include("dataformatting.jl")
 
 function getHeaderData(fileName::String, keywordList::String)
     
@@ -72,8 +73,32 @@ end
 
 
 
-# This is assuming that there is a function that creates a file
-# That lists the first instances of a particular KID in a FITS file
+## This is a function that creates a file
+## That lists the first instances of a particular KID
+## In the given directory
+function firstInstOfKID(dirName::String)
+
+    ## Get the file names from the given directory
+    files = readdir(dirName)
+
+    ## Get all the unique Kepler IDs in the given directory
+    allKIDs = dir_KIDs(dirName)
+
+#    ## Create an array that will store all the file names
+#    instances = String[]
+    
+    for id in allKIDs
+        ## Get the first file name with this Kepler ID
+        instances = files[findfirst(map((x) -> contains(x,id),files))]
+    end
+
+    ## Write out to a file
+
+
+    println("instances: ", instances)
+#    return instances
+
+end
 
 ## This function does the same thing as headerDataForDir, except
 ## it takes a file that contains a list of FITS files that are unique
