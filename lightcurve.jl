@@ -1,8 +1,8 @@
 using FITSIO
-using DataArrays, DataFrames
+#using DataArrays, DataFrames
 #using HDF5, JLD
 
-function get_lc(fitsfile::String)
+function get_lc_segment(fitsfile::String)
     # open the fits table for reading
     f = fits_open_table(fitsfile)
     # read out the length of the arrays
@@ -21,19 +21,14 @@ function get_lc(fitsfile::String)
     # close the fits file
     fits_close_file(f)
 
-    # hcat and convert
-    time_flux = DataArray([time flux])
-    # replace Julia's NaN with DataArray's NA
-    where_nan = findin(time_flux,NaN)
-    time_flux[where_nan] = NA
-    return time_flux
+    # find the indices of flux that are finite
+    good_inds = find(isfinite(flux))
+    time = time[good_inds]
+    flux = flux[good_inds]
+    return time,flux
 end
 
-function meanNorm(darray::DataArray)
-    norm = mean(dropna(darray))
-    norm_array = darray/norm
-    return norm_array
-end
+
 
 #function write_lc(fitsfile::String)
 #    time_flux = get_lc(fitsfile)
