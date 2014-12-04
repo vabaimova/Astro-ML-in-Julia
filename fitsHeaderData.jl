@@ -76,20 +76,25 @@ end
 ## This is a function that creates a file
 ## That lists the first instances of a particular KID
 ## In the given directory
-function firstInstOfKID(dirName::String)
+function firstInstOfKID(dirName::String,fullPath::String)
 
     ## Get the file names from the given directory
     files = readdir(dirName)
 
     ## Get all the unique Kepler IDs in the given directory
     allKIDs = dir_KIDs(dirName)
+    println("KIDs: ", allKIDs)
 
 #    ## Create an array that will store all the file names
-#    instances = String[]
+    instances = String[]
     
     for id in allKIDs
         ## Get the first file name with this Kepler ID
-        instances = files[findfirst(map((x) -> contains(x,id),files))]
+        theInstance = files[findfirst(map((x) -> contains(x,id),files))]
+        ## Create the full path for the file name
+        theInstance = fullPath * theInstance
+        ## Append to the list of all of the first instances
+        append!(instances, [theInstance])
     end
 
     ## Write out to a file
