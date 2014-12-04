@@ -10,7 +10,7 @@
 ## to one big file where each row is a star
 
 using FITSIO
-include("dataformatting.jl")
+include("lightcurveFuncs.jl")
 
 function getHeaderData(fileName::String, keywordList::String)
     
