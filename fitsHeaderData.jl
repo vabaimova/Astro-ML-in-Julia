@@ -47,6 +47,57 @@ end
 
 
 
+## This function takes a directory name and a Kepler ID number
+## and returns the first file instance for that KID
+function firstInstOfKID(dirName::String, kid::String)
+
+    ## Get the file names from the given directory
+    files = readdir(dirName)
+
+    ## Find the first instance of the Kepler ID in the file directory
+    instance = files[findfirst(map((x) -> contains(x,kid),files))]
+    
+    println("instance: ", instance)
+    return instance
+
+end
+
+
+
+## This function takes a directory and a Kepler ID number and returns
+## The header data for that particular ID number by finding the first
+## File that is for that KID
+## The directory name is only used to pass on to the firstInstOFKID()
+function headerDataForKID(kid::String,dirName::String,keywordList::String)
+
+    ## Get the file name of the first instance for the KID
+    file = firstInstOfKID(dirName,kid)
+
+    ## Get the full path of the file
+    file = dirName * file
+
+    ## Get the header data for the file
+    headerData = getHeaderData(file,keywordList)
+
+    println("Data: ", headerData)
+
+    return headerData
+end
+
+
+
+## Testing function
+function for_to_test()
+    kid = "006921913"
+    dirName = "/home/CREATIVE_STATION/lc_foo/"
+    keywordList = "headerKeyWordList.txt"
+
+    headerDataForKID(kid,dirName,keywordList)
+
+end
+
+
+
 ### This function will probably not be used in lieu of a function
 ### that will do the same thing that this one does
 ### except that it will take a function that contains the file names of just
@@ -70,45 +121,6 @@ end
 #
 #    return headerData
 #end
-
-
-
-## This function takes a directory name and a Kepler ID number
-## and returns the first file instance for that KID
-function firstInstOfKID(dirName::String, kid::String)
-
-    ## Get the file names from the given directory
-    files = readdir(dirName)
-
-    ## Find the first instance of the Kepler ID in the file directory
-    instance = files[findfirst(map((x) -> contains(x,kid),files))]
-    
-    println("instance: ", instance)
-    return instance
-
-end
-
-
-
-## This function takes a directory and a Kepler ID number and returns
-## The header data for that particular ID number by finding the first
-## File that is for that KID
-function headerDataForUniqueKIDs(kid::String,dirName::String,keywordList::String)
-
-    files = readdir(dirName) 
-
-    headerData = Float64[]
-
-    for file in files
-#        fileName = "/home/CREATIVE_STATION/lc_foo/" * file
-#        println("Reading file: ", fileName)
-        data = getHeaderData(fileName,keywordList)
-        println("Data: ", data)
-        append!(headerData, [data])
-    end
-
-    return headerData
-end
 
 
 
