@@ -76,7 +76,7 @@ end
 ## This is a function that creates a file
 ## That lists the first instances of a particular KID
 ## In the given directory
-function firstInstOfKID(dirName::String,fullPath::String)
+function firstInstOfKID(dirName::String, pathToLC::String)
 
     ## Get the file names from the given directory
     files = readdir(dirName)
@@ -92,7 +92,7 @@ function firstInstOfKID(dirName::String,fullPath::String)
         ## Get the first file name with this Kepler ID
         theInstance = files[findfirst(map((x) -> contains(x,id),files))]
         ## Create the full path for the file name
-        theInstance = fullPath * theInstance
+        theInstance = pathToLC * theInstance
         ## Append to the list of all of the first instances
         append!(instances, [theInstance])
     end
