@@ -10,8 +10,6 @@
         get_lc_segment
         get_qflat_lc
         do_dflat
-
-
 =#
 
 using FITSIO
@@ -158,6 +156,23 @@ function make_if_needed(dir::String)
     end
 end
   
+
+
+function lightcurveDriver(settings::Settings)
+
+    ## Test all the directories to make sure they exist
+    test_fits_dir(settings.fits_dir)
+    make_if_needed(settings.rlc_dir)
+    make_if_needed(settings.flc_dir)
+    
+    ## Get the unique KIDs in the provided FITS directory
+    kids = dir_KIDs(settings.fits_dir)
+
+    fits_list = readdir(settings.fits_dir)
+    # Not sure what this line is supposed to do
+#    fits_list = map((x) -> fitsl
+end
+
 
 
 function testing()
