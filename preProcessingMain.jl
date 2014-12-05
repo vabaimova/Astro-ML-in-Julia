@@ -28,11 +28,33 @@ type Settings
 end
 
 
-function readSettings(settingsFile::String)
+
+## Make sure that the end of the directory name has a /
+## so that any operation that involved appending to the file path
+## would be carried out successfully
+function checkDirEnd(dirName::String)
+    
+    if dirName[end] != '/'
+        dirName = dirName * "/"
+        println("Needed / addition")
+    end
+    println(dirName)
+    return dirName
+
+end
+
+
+
+function initializeSettings(settingsFile::String)
 
     f = open(settingsFile,"r")
+
     settings = readdlm(f,String,skipstart=6)
-    println("Settings: ", settings)
+
+    mySettings = Settings(settings[1],settings[2],settings[3],settings[4])
+
+
+    
 end
 
 
