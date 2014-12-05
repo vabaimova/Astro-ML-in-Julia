@@ -76,50 +76,66 @@ end
 
 
 
+## Overwrites the status file with the current status and KID
+function overwriteStatusFile(statusFile::String,step::String,kid::String)
+    ## DO NOT WANT TO TRUNCATE, CAUSES ISSUES
+#    ## Truncate file to rewrite current step
+#    truncate(statusFile,0)
+#    ## Write the current step
+#    write(statusFile,step)
+
+
+end
+
+
+
 function main(chunkNum::Int64,settingsFile::String,statusFile::String)
 
     ## Initialize the settings
     settings = initializeSettings(settingsFile,chunkNum)
 
+    ## Get the first KID in the chunk directory
+    allKIDs = dir_KIDs(settings.fits_dir)
+    firstKID = allKIDs[1]
+
     ## Get the current status setup
-    f = open(statusFile,"r")
-    try status = readlines(f)
+    ## Check if status file exists
+    if isfile(statusFile)
+        f = open(statusFile,"r+")
+        status = readdlm(f,String)
         ## A status file exists so process stopped in the middle
         ## These are the settings of where to set up
         step = status[1]
         currKID = status[2]
-    catch
+   else
         ## The default settings are used if no status file exits
         step = "lightcurve"
-        # currKID = whatever the first one in the chunk is
-    end
+        currKID = firstKID
 
+        ## Create a status file
+        statusFile = open("STATUS.txt","w")
+   end
 
-#    ## Name the steps
-#    lightcurve = "Starting lightcurve step"
-#    headerData = "Starting headerData step"
-#    combine = "Starting the combination step"
-
-    ## Need to create a list of all of the unique KIDs in the
-    ## directory of the chunk
-    # allKIDs = dir_KIDs(dirName)
+#   println("Status file: ", statusFile)
+#   println("current KID: ", currKID)
+#   println("step: ", step)
 
     ## Begin switch statement that controls process
+
     @label start
     @match step begin
         ## In this first step we are extracting the data 
         ## from the lightcurves
         "lightcurve"        =>  begin
-
-                                step = "headerData"
-                                @goto start
+                                    step = "headerData"
+                                    @goto start
                                 end
 
         ## The second step is to get the header data for each KID
-         "headerData"       =>  begin
+        "headerData"        =>  begin
 
-                                step = "" 
-                                @goto start
+                                    step = "" 
+                                    @goto start
                                 end
 
         ## The third step is to combine all the data we acquired
