@@ -36,38 +36,53 @@ function checkDirEnd(dirName::String)
     
     if dirName[end] != '/'
         dirName = dirName * "/"
-        println("Needed / addition")
+#        println("Needed / addition")
     end
-    println(dirName)
+#    println(dirName)
     return dirName
 
 end
 
 
 
-function initializeSettings(settingsFile::String)
+function initializeSettings(settingsFile::String,chunkNum::Int64)
 
-    f = open(settingsFile,"r")
-
-    settings = readdlm(f,String,skipstart=6)
-
-    mySettings = Settings(settings[1],settings[2],settings[3],settings[4])
-
-
+    ## Make sure that a settings file exists
+    try f = open(settingsFile,"r")
+        ## The file exists so proceed to read it
+        settings = readdlm(f,String,skipstart=6)
+        ## Create a settings object that contains the data
+        ## found in SETTINGS.txt
+        mySettings = Settings(settings[1],settings[2],settings[3],settings[4])
     
+        ## Check to make sure that the directory names end with "/"
+        mySettings.fits_dir = checkDirEnd(mySettings.fits_dir)
+        mySettings.rlc_dir = checkDirEnd(mySettings.rlc_dir)
+        mySettings.flc_dir = checkDirEnd(mySettings.flc_dir)
+        mySettings.header_dir = checkDirEnd(mySettings.header_dir)
+    
+        ## Modify the FITS directory in the settings
+        ## to include the chunk number
+        mySettings.fits_dir = mySettings.fits_dir * string(chunkNum)
+    
+        return mySettings
+
+   catch
+        ## The file does not exist
+        println("Settings file does not exist!")
+        throw("Make sure you have SETTINGS.txt")
+    end
 end
 
 
 
-function main(chunkNum::Int64,settingsfile::String,statusFile::String)
-    # Need to somehow handle the chunk number thing
-    # the chunk number will help the settings configuration
-    # figure out which directory to look in to get the files for that chunk
+function main(chunkNum::Int64,settingsFile::String,statusFile::String)
 
-    # Do something clever with all the settings
-    
+    ## Initialize the settings
+    settings = initializeSettings(settingsFile,chunkNum)
 
     ## Get the current status setup
+    f = open(statusFile,"r")
     try status = readlines(f)
         ## A status file exists so process stopped in the middle
         ## These are the settings of where to set up
