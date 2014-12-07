@@ -1,6 +1,8 @@
 #=
     preProcessingMain
     Copyright © 2014 Vera Abaimova <stormseecker@gmail.com>
+        and Mark Wells <mwellsa@gmail.com>
+    
 
     Distributed under terms of the MIT license.
 =#
@@ -78,13 +80,11 @@ end
 
 ## Overwrites the status file with the current status and KID
 function overwriteStatusFile(statusFile::String,step::String,kid::String)
-    ## DO NOT WANT TO TRUNCATE, CAUSES ISSUES
-#    ## Truncate file to rewrite current step
-#    truncate(statusFile,0)
-#    ## Write the current step
-#    write(statusFile,step)
-
-
+    f = open(statusFile,"r+")
+    status = readdlm(f,String)
+    status[1] = step
+    status[2] = kid
+    writedlm(statusFile,status,"\n")
 end
 
 
