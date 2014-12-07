@@ -97,7 +97,7 @@ function for_to_test()
 end
 
 
-function headerDriver(settings::Settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
+function headerDriver(settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
 
     ## Test all the directories to make sure they exist
     test_fits_dir(settings.fits_dir)
