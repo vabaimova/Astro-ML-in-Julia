@@ -159,7 +159,7 @@ end
   
 
 
-function lightcurveDriver(settings::Settings,currKID::String,allKIDs,chunkNum::Int64)
+function lightcurveDriver(settings,currKID::String,allKIDs,chunkNum::Int64)
 
     ## Test all the directories to make sure they exist
     test_fits_dir(settings.fits_dir)
