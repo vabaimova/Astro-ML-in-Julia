@@ -11,12 +11,13 @@ include("lightcurveFuncs.jl")
 include("headerData.jl")
 include("preProcessingMain.jl")
 
-function testLCDriver()
-    settingsFile = "CREATIVE_STATION_SETTINGS.txt"
-    mySettings = initializeSettings(settingsFile,1)
+function testLCDriver(settingsFile::String,chunkNum::Int64)
+#    settingsFile = "CREATIVE_STATION_SETTINGS.txt"
+#    chunkNum = 1
+    mySettings = initializeSettings(settingsFile,string(chunkNum))
 
     allKIDs = dir_KIDs(settings.fits_dir)
     firstKID = allKIDs[1]
 
-    lightcurveDriver(mySettings,firstKID,allKIDs,1)
+    lightcurveDriver(mySettings,firstKID,allKIDs,string(chunkNum))
 end
