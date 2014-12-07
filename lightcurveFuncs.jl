@@ -129,7 +129,6 @@ end
 
 
 
-## Use this in preProcessingMain() to initialize settings
 function test_fits_dir(dir::String)
     #=
     Produces a warning message if directory does not exist
@@ -145,10 +144,11 @@ function test_fits_dir(dir::String)
 end
 
 
-## Use this in preProcessingMain() to initialize settings
+
 function make_if_needed(dir::String)
     #=
-    creates dir if it does not already exist
+    Produces a warning message if directory does not exist
+    name will be used to generate warning message
     =#
     try readdir(dir)
     catch
@@ -180,7 +180,9 @@ function lightcurveDriver(settings::Settings,currKID::String,allKIDs)
     endInd = endof(allKIDs)
 
     ## Get the name of the flc_file
-    flc_file = settings.flc_dir * chunkNum * ".csv"
+    flc_file_name = settings.flc_dir * chunkNum * ".csv"
+    flc_file = open(flc_file_name,"a")
+
 
     for i = currInd:endInd
         ## Set the current kid
@@ -209,6 +211,7 @@ function lightcurveDriver(settings::Settings,currKID::String,allKIDs)
         ## Write out to the lc feature file
         feat_line = [kid,qvar,qskew,qkurt,dvar,dskew,dkurt]
         writecsv(flc_file,feat_line)
+        flush(flc_file)
 
     end
 end
@@ -221,10 +224,7 @@ function testing()
 
     #kids_file = "/home/mark/foo.txt   ## this will 
     #kids = readdlm(kids_file)         ## this will be the 'chunk file' that will be passed to main
-
-    # this is only for testing!! will need to read the kids in from a file specified from settings
-    # settings.kid_file
-    kids = dir_KIDs(lc_dir)
+    kids = dir_KIDs(lc_dir)   ## this will need to come from a file specified by settings file
 
     reduced_lc_dir = "/home/mark/rlc_foo/"  ## should come from settings file
     make_if_needed(reduced_lc_dir)
@@ -254,7 +254,7 @@ function testing()
         dkurt = kurtosis(dflux)
 
         ## write out an hdf5 file with time, qflux, dflux
-        rlc_file = rlc_dir * kid * ".jld"
+        rlc_file = rlc_dir*kid
         save(rlc_file, "time", time, "qflux", qflux, "dflux", dflux)
 
         ## write out to the lc_feature file
