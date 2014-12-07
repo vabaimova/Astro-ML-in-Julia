@@ -1,10 +1,14 @@
 : Think of this file as the one stop 'shop' where all the defaults and user
 : specific settings can be set.  This should remove any need to hard code
 : settings and allow for flexibility and portability.
-
-(the code will look for the below line to begin reading so don't touch it!)
-==Start reading here==
-fits file directory: /home/CREATIVE_STATION/fits/
-reduced light curve directory: /home/CREATIVE_STATION/rlc/
-features of light curves: /home/CREATIVE_STATION/flc/
-features of header data: /home/CREATIVE_STATION/header/
+:
+:(the code will look for the below line to begin reading so don't touch it!)
+:==Start reading here==
+:fits file directory: 
+/home/CREATIVE_STATION/fits/
+:reduced light curve directory: 
+/home/CREATIVE_STATION/rlc/
+:features of light curves: 
+/home/CREATIVE_STATION/flc/
+:features of header data: 
+/home/CREATIVE_STATION/header/
