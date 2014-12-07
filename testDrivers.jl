@@ -8,16 +8,16 @@
 ## A program to test the drivers that preprocess the data
 
 include("lightcurveFuncs.jl")
-include("headerData.jl")
+include("fitsHeaderData.jl")
 include("preProcessingMain.jl")
 
-function testLCDriver(settingsFile::String,chunkNum::Int64)
+function testLCDriver(settingsFile::String,headerKeywordList::String,chunkNum::Int64)
 #    settingsFile = "CREATIVE_STATION_SETTINGS.txt"
 #    chunkNum = 1
-    mySettings = initializeSettings(settingsFile,string(chunkNum))
+    mySettings = initializeSettings(settingsFile,headerKeywordList,chunkNum)
 
     allKIDs = dir_KIDs(settings.fits_dir)
     firstKID = allKIDs[1]
 
-    lightcurveDriver(mySettings,firstKID,allKIDs,string(chunkNum))
+    lightcurveDriver(mySettings,firstKID,allKIDs,chunkNum)
 end
