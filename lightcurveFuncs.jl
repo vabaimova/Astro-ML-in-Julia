@@ -10,6 +10,7 @@
         get_lc_segment
         get_qflat_lc
         do_dflat
+        lightcurveDriver
 =#
 
 using FITSIO
@@ -158,7 +159,7 @@ end
   
 
 
-function lightcurveDriver(settings::Settings,currKID::String,allKIDs)
+function lightcurveDriver(settings::Settings,currKID::String,allKIDs,chunkNum::Int64)
 
     ## Test all the directories to make sure they exist
     test_fits_dir(settings.fits_dir)
@@ -180,7 +181,7 @@ function lightcurveDriver(settings::Settings,currKID::String,allKIDs)
     endInd = endof(allKIDs)
 
     ## Get the name of the flc_file
-    flc_file_name = settings.flc_dir * chunkNum * ".csv"
+    flc_file_name = settings.flc_dir * "/flc_" * string(chunkNum) * ".csv"
     flc_file = open(flc_file_name,"a")
 
 
@@ -210,6 +211,8 @@ function lightcurveDriver(settings::Settings,currKID::String,allKIDs)
 
         ## Write out to the lc feature file
         feat_line = [kid,qvar,qskew,qkurt,dvar,dskew,dkurt]
+        feat_line = reshape(feat_line,1,length(feat_line))
+
         writecsv(flc_file,feat_line)
         flush(flc_file)
 
@@ -218,48 +221,48 @@ end
 
 
 
-function testing()
-    fits_dir = "/home/mark/lc_foo/"   ## should come from settings file
-    test_fits_dir(fits_dir)
-
-    #kids_file = "/home/mark/foo.txt   ## this will 
-    #kids = readdlm(kids_file)         ## this will be the 'chunk file' that will be passed to main
-    kids = dir_KIDs(lc_dir)   ## this will need to come from a file specified by settings file
-
-    reduced_lc_dir = "/home/mark/rlc_foo/"  ## should come from settings file
-    make_if_needed(reduced_lc_dir)
-    
-    feature_lc_dir = "/home/mark/flc_foo/"  ## should come from settings file
-    make_if_needed(feature_lc_dir)
-
-    fits_list = readdir(fits_dir)
-    ## get the full fits file path
-    fits_list = map((x) -> fits_list_dir * x, fits_list)
-    ## loop over the kids
-    for kid in kids
-        ## get the qflux lightcurve
-        time,qflux = get_qflat_lc(kid,fits_list)
-
-        ## do feature extraction for qflux
-        qvar = var(qflux)
-        qskew = skewness(qflux)
-        qkurt = kurtosis(qflux)
-
-        ## perform dflat on the qflux lightcurve
-        dflux = do_dflat(time,qflux,1.0)    ## 1 day flattening
-
-        ## do feature extraction for dflux
-        dvar = var(dflux)
-        dskew = skewness(dflux)
-        dkurt = kurtosis(dflux)
-
-        ## write out an hdf5 file with time, qflux, dflux
-        rlc_file = rlc_dir*kid
-        save(rlc_file, "time", time, "qflux", qflux, "dflux", dflux)
-
-        ## write out to the lc_feature file
-        feat_line = [kid,qvar,qskew,qkurt,dvar,dskew,dkurt]
-
-    end
-    
-end
+#function testing()
+#    fits_dir = "/home/mark/lc_foo/"   ## should come from settings file
+#    test_fits_dir(fits_dir)
+#
+#    #kids_file = "/home/mark/foo.txt   ## this will 
+#    #kids = readdlm(kids_file)         ## this will be the 'chunk file' that will be passed to main
+#    kids = dir_KIDs(lc_dir)   ## this will need to come from a file specified by settings file
+#
+#    reduced_lc_dir = "/home/mark/rlc_foo/"  ## should come from settings file
+#    make_if_needed(reduced_lc_dir)
+#    
+#    feature_lc_dir = "/home/mark/flc_foo/"  ## should come from settings file
+#    make_if_needed(feature_lc_dir)
+#
+#    fits_list = readdir(fits_dir)
+#    ## get the full fits file path
+#    fits_list = map((x) -> fits_list_dir * x, fits_list)
+#    ## loop over the kids
+#    for kid in kids
+#        ## get the qflux lightcurve
+#        time,qflux = get_qflat_lc(kid,fits_list)
+#
+#        ## do feature extraction for qflux
+#        qvar = var(qflux)
+#        qskew = skewness(qflux)
+#        qkurt = kurtosis(qflux)
+#
+#        ## perform dflat on the qflux lightcurve
+#        dflux = do_dflat(time,qflux,1.0)    ## 1 day flattening
+#
+#        ## do feature extraction for dflux
+#        dvar = var(dflux)
+#        dskew = skewness(dflux)
+#        dkurt = kurtosis(dflux)
+#
+#        ## write out an hdf5 file with time, qflux, dflux
+#        rlc_file = rlc_dir*kid
+#        save(rlc_file, "time", time, "qflux", qflux, "dflux", dflux)
+#
+#        ## write out to the lc_feature file
+#        feat_line = [kid,qvar,qskew,qkurt,dvar,dskew,dkurt]
+#
+#    end
+#    
+#end

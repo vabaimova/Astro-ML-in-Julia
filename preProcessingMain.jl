@@ -27,6 +27,8 @@ type Settings
     flc_dir::String
     ## The name of the directory that contains the header data
     header_dir::String
+    ## Header keyword list
+    keyword_list::Array(String)
 end
 
 
@@ -47,7 +49,27 @@ end
 
 
 
-function initializeSettings(settingsFile::String,chunkNum::Int64)
+## Read in header keyword list
+function readHeaderKeywords(keywordListFile::String)
+    ## Make sure that a keyword file exists
+    try f = open(keywordListFile,"r")
+        ## The file exists so proceed to read it
+        keywords = readdlm(f,String)
+    
+        return keywords
+
+   catch
+        ## The file does not exist
+        println("Keyword file does not exist!")
+        throw("Make sure you have headerKeyWordList.txt")
+    end
+
+end
+
+
+
+
+function initializeSettings(settingsFile::String,keywordListFile::String,chunkNum::Int64)
 
     ## Make sure that a settings file exists
     try f = open(settingsFile,"r")
@@ -67,6 +89,9 @@ function initializeSettings(settingsFile::String,chunkNum::Int64)
         ## to include the chunk number
         mySettings.fits_dir = mySettings.fits_dir * string(chunkNum)
     
+        ## Get the header keywords
+        mySettings.keyword_list = readHeaderKeywords(keywordListFile)
+
         return mySettings
 
    catch
@@ -89,10 +114,10 @@ end
 
 
 
-function main(chunkNum::Int64,settingsFile::String,statusFile::String)
+function main(chunkNum::Int64,settingsFile::String,statusFile::String,headerKeywordList::String)
 
     ## Initialize the settings
-    settings = initializeSettings(settingsFile,chunkNum)
+    settings = initializeSettings(settingsFile,chunkNum,headerKeywordList)
 
     ## Get the first KID in the chunk directory
     allKIDs = dir_KIDs(settings.fits_dir)

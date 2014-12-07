@@ -17,3 +17,6 @@
 ## for each of the assigned Kepler IDs 
 ## It also creates a text file that contains the full path for only
 ## the first file that is for a specific ID
+
+
+# At some point use cp(source,destination) to copy files
