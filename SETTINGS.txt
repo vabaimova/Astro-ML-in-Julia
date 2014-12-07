@@ -3,4 +3,8 @@
 : settings and allow for flexibility and portability.
 
 (the code will look for the below line to begin reading so don't touch it!)
+:fits file directory: 
+:reduced light curve directory: 
+:features of light curves: 
+:features of header data: 
 ==Start reading here==
