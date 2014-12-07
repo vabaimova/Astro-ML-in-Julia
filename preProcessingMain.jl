@@ -28,7 +28,7 @@ type Settings
     ## The name of the directory that contains the header data
     header_dir::String
     ## Header keyword list
-    keyword_list::Array(String)
+    keyword_list::Array{String}
 end
 
 
