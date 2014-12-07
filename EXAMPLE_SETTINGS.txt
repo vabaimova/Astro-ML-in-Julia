@@ -4,7 +4,7 @@
 
 (the code will look for the below line to begin reading so don't touch it!)
 ==Start reading here==
-/home/CREATIVE_STATION/fits/
-/home/CREATIVE_STATION/rlc/
-/home/CREATIVE_STATION/flc/
-/home/CREATIVE_STATION/header/
+fits file directory: /home/CREATIVE_STATION/fits/
+reduced light curve directory: /home/CREATIVE_STATION/rlc/
+features of light curves: /home/CREATIVE_STATION/flc/
+features of header data: /home/CREATIVE_STATION/header/
