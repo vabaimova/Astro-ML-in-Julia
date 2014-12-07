@@ -18,5 +18,5 @@ function testLCDriver()
     allKIDs = dir_KIDs(settings.fits_dir)
     firstKID = allKIDs[1]
 
-    lightcurveDriver(mySettings,firstKID,allKIDs)
+    lightcurveDriver(mySettings,firstKID,allKIDs,1)
 end
