@@ -27,6 +27,8 @@ type Settings
     flc_dir::String
     ## The name of the directory that contains the header data
     header_dir::String
+    ## Directory that will contain the status file
+    status_dir::String
     ## Header keyword list
     keyword_list::Array{String}
 end
@@ -86,7 +88,7 @@ function initializeSettings(settingsFile::String,keywordListFile::String,chunkNu
 
         ## Create a settings object that contains the data
         ## found in SETTINGS.txt
-        mySettings = Settings(settings[1],settings[2],settings[3],settings[4],keyword_list)
+        mySettings = Settings(settings[1],settings[2],settings[3],settings[4],settings[5],keyword_list)
     
         ## Modify the FITS directory in the settings
         ## to include the chunk number
@@ -97,8 +99,7 @@ function initializeSettings(settingsFile::String,keywordListFile::String,chunkNu
         mySettings.rlc_dir = checkDirEnd(mySettings.rlc_dir)
         mySettings.flc_dir = checkDirEnd(mySettings.flc_dir)
         mySettings.header_dir = checkDirEnd(mySettings.header_dir)
-    
-    
+        mySettings.status_dir = checkDirEnd(mySettings.status_dir)
 
         return mySettings
 
@@ -147,7 +148,7 @@ function main(chunkNum::Int64,settingsFile::String,statusFileName::String,header
         currKID = firstKID
 
         ## Create a status file
-        statusFileName = settings.fits_dir * "STATUS_" * string(chunkNum) * ".txt"
+        statusFileName = settings.status_dir * "STATUS_" * string(chunkNum) * ".txt"
         statusFile = open(statusFileName,"w+")
         overwriteStatusFile(statusFile,step,currKID)
    end
