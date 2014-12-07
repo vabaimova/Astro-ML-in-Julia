@@ -139,7 +139,7 @@ function main(chunkNum::Int64,settingsFile::String,statusFile::String,headerKeyw
 
         ## Create a status file
         statusFileName = "STATUS_" * chunkNum * ".txt"
-        statusFile = open(statusFileName,"w")
+        statusFile = open(statusFileName,"r+")
    end
 
 #   println("Status file: ", statusFile)
