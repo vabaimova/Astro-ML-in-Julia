@@ -211,6 +211,8 @@ function lightcurveDriver(settings::Settings,currKID::String,allKIDs,chunkNum::I
 
         ## Write out to the lc feature file
         feat_line = [kid,qvar,qskew,qkurt,dvar,dskew,dkurt]
+        feat_line = reshape(feat_line,1,length(feat_line))
+
         writecsv(flc_file,feat_line)
         flush(flc_file)
 
