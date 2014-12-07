@@ -158,19 +158,59 @@ end
   
 
 
-function lightcurveDriver(settings::Settings)
+function lightcurveDriver(settings::Settings,currKID::String,allKIDs)
 
     ## Test all the directories to make sure they exist
     test_fits_dir(settings.fits_dir)
     make_if_needed(settings.rlc_dir)
     make_if_needed(settings.flc_dir)
     
-    ## Get the unique KIDs in the provided FITS directory
-    kids = dir_KIDs(settings.fits_dir)
+    # Don't need to do this since the calculation is already made in
+    # the main function that will be calling this
+#    ## Get the unique KIDs in the provided FITS directory
+#    kids = dir_KIDs(settings.fits_dir)
 
     fits_list = readdir(settings.fits_dir)
-    # Not sure what this line is supposed to do
-#    fits_list = map((x) -> fitsl
+    # Won't need the mapping line of code because
+    # The settings initialization already has the full file path
+
+    ## Get the index of the current KID
+    currInd = findfirst(allKIDs,currKID)
+    ## Get the last index
+    endInd = endof(allKIDs)
+
+    ## Get the name of the flc_file
+    flc_file = settings.flc_dir * chunkNum * ".csv"
+
+    for i = currInd:endInd
+        ## Set the current kid
+        kid = allKIDs[i]
+
+        ## Get the qflux lightcurve
+        time,qflux = get_qflat_lc(kid,fits_list)
+
+        ## Do feature extraction for qflux
+        qvar = var(qflux)
+        qskew = skewness(qflux)
+        qkurt = kurtosis(qflux)
+
+        ## Perform dflat on the qflux lightcurve
+        dflux = do_dflat(time,qflux,1.0)    ## 1 day flattening
+
+        ## Do feature extraction for dflux
+        dvar = var(dflux)
+        dskew = skewness(dflux)
+        dkurt = kurtosis(dflux)
+
+        ## Write out an hdf5 file with time, qflux, dflux
+        rlc_file = settings.rlc_dir * kid * "jld"
+        save(rlc_file, "time", time, "qflux", qflux, "dflux", dflux)
+
+        ## Write out to the lc feature file
+        feat_line = [kid,qvar,qskew,qkurt,dvar,dskew,dkurt]
+        writecsv(flc_file,feat_line)
+
+    end
 end
 
 
