@@ -132,6 +132,7 @@ function main(chunkNum::Int64,settingsFile::String,statusFileName::String,header
 
     ## Get the current status setup
     ## Check if status file exists
+    ## Needs to be the full directory
     if isfile(statusFileName)
         statusFile = open(statusFileName,"r+")
         status = readdlm(statusFile,String)
@@ -146,7 +147,7 @@ function main(chunkNum::Int64,settingsFile::String,statusFileName::String,header
         currKID = firstKID
 
         ## Create a status file
-        statusFileName = "STATUS_" * string(chunkNum) * ".txt"
+        statusFileName = settings.fits_dir * "STATUS_" * string(chunkNum) * ".txt"
         statusFile = open(statusFileName,"w+")
         overwriteStatusFile(statusFile,step,currKID)
    end
