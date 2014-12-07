@@ -129,6 +129,7 @@ end
 
 
 
+## Use this in preProcessingMain() to initialize settings
 function test_fits_dir(dir::String)
     #=
     Produces a warning message if directory does not exist
@@ -144,11 +145,10 @@ function test_fits_dir(dir::String)
 end
 
 
-
+## Use this in preProcessingMain() to initialize settings
 function make_if_needed(dir::String)
     #=
-    Produces a warning message if directory does not exist
-    name will be used to generate warning message
+    creates dir if it does not already exist
     =#
     try readdir(dir)
     catch
@@ -221,7 +221,10 @@ function testing()
 
     #kids_file = "/home/mark/foo.txt   ## this will 
     #kids = readdlm(kids_file)         ## this will be the 'chunk file' that will be passed to main
-    kids = dir_KIDs(lc_dir)   ## this will need to come from a file specified by settings file
+
+    # this is only for testing!! will need to read the kids in from a file specified from settings
+    # settings.kid_file
+    kids = dir_KIDs(lc_dir)
 
     reduced_lc_dir = "/home/mark/rlc_foo/"  ## should come from settings file
     make_if_needed(reduced_lc_dir)
@@ -251,7 +254,7 @@ function testing()
         dkurt = kurtosis(dflux)
 
         ## write out an hdf5 file with time, qflux, dflux
-        rlc_file = rlc_dir*kid
+        rlc_file = rlc_dir * kid * ".jld"
         save(rlc_file, "time", time, "qflux", qflux, "dflux", dflux)
 
         ## write out to the lc_feature file
