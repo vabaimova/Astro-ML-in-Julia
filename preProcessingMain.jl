@@ -74,7 +74,7 @@ function initializeSettings(settingsFile::String,keywordListFile::String,chunkNu
     ## Make sure that a settings file exists
     try f = open(settingsFile,"r")
         ## The file exists so proceed to read it
-        settings = readdlm(f,String,skipstart=6)
+        settings = readdlm(f,String,comment_char=':')
         ## Create a settings object that contains the data
         ## found in SETTINGS.txt
         mySettings = Settings(settings[1],settings[2],settings[3],settings[4])
