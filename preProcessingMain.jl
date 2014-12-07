@@ -55,6 +55,10 @@ function readHeaderKeywords(keywordListFile::String)
     try f = open(keywordListFile,"r")
         ## The file exists so proceed to read it
         keywords = readdlm(f,String)
+        ## Explicitly convert to strings from substrings
+        println("typeof(keywords)=",typeof(keywords))
+        keywords = convert(Array{ASCIIString},keywords)
+
     
         return keywords
 
@@ -84,15 +88,16 @@ function initializeSettings(settingsFile::String,keywordListFile::String,chunkNu
         ## found in SETTINGS.txt
         mySettings = Settings(settings[1],settings[2],settings[3],settings[4],keyword_list)
     
+        ## Modify the FITS directory in the settings
+        ## to include the chunk number
+        mySettings.fits_dir = mySettings.fits_dir * string(chunkNum)
+
         ## Check to make sure that the directory names end with "/"
         mySettings.fits_dir = checkDirEnd(mySettings.fits_dir)
         mySettings.rlc_dir = checkDirEnd(mySettings.rlc_dir)
         mySettings.flc_dir = checkDirEnd(mySettings.flc_dir)
         mySettings.header_dir = checkDirEnd(mySettings.header_dir)
     
-        ## Modify the FITS directory in the settings
-        ## to include the chunk number
-        mySettings.fits_dir = mySettings.fits_dir * string(chunkNum)
     
 
         return mySettings
@@ -107,20 +112,19 @@ end
 
 
 ## Overwrites the status file with the current status and KID
-function overwriteStatusFile(statusFile::String,step::String,kid::String)
-    f = open(statusFile,"r+")
-    status = readdlm(f,String)
-    status[1] = step
-    status[2] = kid
-    writedlm(statusFile,status,"\n")
+function overwriteStatusFile(statusFile::IOStream,step::String,kid::String)
+    status = [step,kid]
+    writedlm(statusFile,status)
+    flush(statusFile)
+    seekstart(statusFile)
 end
 
 
 
-function main(chunkNum::Int64,settingsFile::String,statusFile::String,headerKeywordList::String)
+function main(chunkNum::Int64,settingsFile::String,statusFileName::String,headerKeywordFile::String)
 
     ## Initialize the settings
-    settings = initializeSettings(settingsFile,chunkNum,headerKeywordList)
+    settings = initializeSettings(settingsFile,headerKeywordFile,chunkNum)
 
     ## Get the first KID in the chunk directory
     allKIDs = dir_KIDs(settings.fits_dir)
@@ -128,9 +132,10 @@ function main(chunkNum::Int64,settingsFile::String,statusFile::String,headerKeyw
 
     ## Get the current status setup
     ## Check if status file exists
-    if isfile(statusFile)
-        f = open(statusFile,"r+")
-        status = readdlm(f,String)
+    if isfile(statusFileName)
+        statusFile = open(statusFileName,"r+")
+        status = readdlm(statusFile,String)
+        seekstart(statusFile)
         ## A status file exists so process stopped in the middle
         ## These are the settings of where to set up
         step = status[1]
@@ -141,11 +146,12 @@ function main(chunkNum::Int64,settingsFile::String,statusFile::String,headerKeyw
         currKID = firstKID
 
         ## Create a status file
-        statusFileName = "STATUS_" * chunkNum * ".txt"
-        statusFile = open(statusFileName,"r+")
+        statusFileName = "STATUS_" * string(chunkNum) * ".txt"
+        statusFile = open(statusFileName,"w+")
+        overwriteStatusFile(statusFile,step,currKID)
    end
 
-#   println("Status file: ", statusFile)
+   println("Status file: ", statusFile)
 #   println("current KID: ", currKID)
 #   println("step: ", step)
 
@@ -156,14 +162,23 @@ function main(chunkNum::Int64,settingsFile::String,statusFile::String,headerKeyw
         ## In this first step we are extracting the data 
         ## from the lightcurves
         "lightcurve"        =>  begin
+                                    println("Starting lightcurve driver!")
+                                    lightcurveDriver(settings,allKIDs,chunkNum,statusFile)
                                     step = "headerData"
+                                    currKID = firstKID
+
+                                    overwriteStatusFile(statusFile,step,currKID)
+                                    println("Finished lightcurve driver!")
                                     @goto start
                                 end
 
         ## The second step is to get the header data for each KID
         "headerData"        =>  begin
-
+                                    println("Starting header driver!")
+                                    headerDriver(settings,allKIDs,chunkNum,statusFile)
                                     step = "" 
+                                    currKID = firstKID
+                                    println("Finished header driver!")
                                     @goto start
                                 end
 

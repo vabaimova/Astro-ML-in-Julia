@@ -12,22 +12,27 @@
 using FITSIO
 include("lightcurveFuncs.jl")
 
-function getHeaderData(fileName::String, keywordList::String)
+function getHeaderData(fileName::String, settings)
     
+#    println(fileName)
     fitsFile = FITS(fileName)
     header = readheader(fitsFile[1])
-    keywordFile = open(keywordList,"r")
-
-    ## Create an array of keywords that contain the desired data
-    keywords = readdlm(keywordFile,String)
-    keywords = map((x) -> normalize_string(x),keywords)
 
     ## Create array that will contain the extracted data
-    starData = Float64[]
+    starData = Any[]
 
-    for keyword in keywords
+    for keyword in settings.keyword_list
         ## Access the value stored in the header at the keyword
-        data = header[keyword] 
+#        println("type of keyword list: ",typeof(settings.keyword_list))
+#        println("type of keyword: ", typeof(keyword))
+
+        data = header[keyword]
+
+        if keyword == "KEPLERID"
+            data = @sprintf("%d",data)
+#            println(typeof(data))
+            data = lpad(data,9,0)
+        end
 
         ## Test if there is not a value
         ## If no value exists, replace with -9999
@@ -57,7 +62,7 @@ function firstInstOfKID(dirName::String, kid::String)
     ## Find the first instance of the Kepler ID in the file directory
     instance = files[findfirst(map((x) -> contains(x,kid),files))]
     
-    println("instance: ", instance)
+#    println("instance: ", instance)
     return instance
 
 end
@@ -68,16 +73,16 @@ end
 ## The header data for that particular ID number by finding the first
 ## File that is for that KID
 ## The directory name is only used to pass on to the firstInstOFKID()
-function headerDataForKID(kid::String,dirName::String,keywordList::String)
+function headerDataForKID(kid::String,settings)
 
     ## Get the file name of the first instance for the KID
-    file = firstInstOfKID(dirName,kid)
+    file = firstInstOfKID(settings.fits_dir,kid)
 
     ## Get the full path of the file
-    file = dirName * file
+    file = settings.fits_dir * file
 
     ## Get the header data for the file
-    headerData = getHeaderData(file,keywordList)
+    headerData = getHeaderData(file,settings)
 
     println("Data: ", headerData)
 
@@ -107,7 +112,9 @@ function headerDriver(settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
     fits_list = readdir(settings.fits_dir)
 
     status = readdlm(statusIO,String)
+    seekstart(statusIO)
     currKID = status[2]
+
     ## Get the index of the current KID
     currInd = findfirst(allKIDs,currKID)
     ## Get the last index
@@ -120,44 +127,17 @@ function headerDriver(settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
     for i = currInd:endInd
         ## Set the current kid
         kid = allKIDs[i]
+        println(typeof(kid))
 
-        head_data = headerDataForKID(kid,fits_dir,settings.keyword_list)
+        head_data = headerDataForKID(kid,settings)
         writecsv(header_file,head_data)
         flush(header_file)
 
         ## update the current status
         status[2] = kid
-        writedlm(statusIO,status,delim="\n")
-        flush(statusIO)
+        overwriteStatusFile(statusIO,status[1],status[2])
     end
 end
-
-
-
-### This function will probably not be used in lieu of a function
-### that will do the same thing that this one does
-### except that it will take a function that contains the file names of just
-### one instance of any particular Kepler ID number
-#function headerDataForDir(dirName::String,keywordList::String,beginPath::String)
-#
-#    fitsFiles = readdir(dirName)
-#    headerData = Float64[]
-#
-#    for file in fitsFiles
-###        fileName = "/home/CREATIVE_STATION/lc_foo/" * file
-#        fileName = beginPath * file
-##        println("Reading file: ", fileName)
-#        data = getHeaderData(fileName,keywordList)
-#        println("Data: ", data)
-#        append!(headerData, [data])
-#    end
-#
-### Used for testing the code    
-##    println("Header data: ", headerData)
-#
-#    return headerData
-#end
-
 
 
 

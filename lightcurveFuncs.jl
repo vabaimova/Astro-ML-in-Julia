@@ -161,21 +161,20 @@ end
   
 
 
-function lightcurveDriver(settings,currKID::String,allKIDs,chunkNum::Int64)
+function lightcurveDriver(settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
 
     ## Test all the directories to make sure they exist
     test_fits_dir(settings.fits_dir)
     make_if_needed(settings.rlc_dir)
     make_if_needed(settings.flc_dir)
     
-    # Don't need to do this since the calculation is already made in
-    # the main function that will be calling this
-#    ## Get the unique KIDs in the provided FITS directory
-#    kids = dir_KIDs(settings.fits_dir)
 
+    ## The settings initialization already has the full file path
     fits_list = readdir(settings.fits_dir)
-    # Won't need the mapping line of code because
-    # The settings initialization already has the full file path
+
+    status = readdlm(statusIO,String)
+    seekstart(statusIO)
+    currKID = status[2]
 
     ## Get the index of the current KID
     currInd = findfirst(allKIDs,currKID)
@@ -187,6 +186,7 @@ function lightcurveDriver(settings,currKID::String,allKIDs,chunkNum::Int64)
     flc_file = open(flc_file_name,"a")
 
     fits_list = map((x) -> settings.fits_dir * "/"  * x, fits_list)
+
 
     for i = currInd:endInd
         ## Set the current kid
@@ -219,6 +219,9 @@ function lightcurveDriver(settings,currKID::String,allKIDs,chunkNum::Int64)
         writecsv(flc_file,feat_line)
         flush(flc_file)
 
+        ## update the current status
+        status[2] = kid
+        overwriteStatusFile(statusIO,status[1],status[2])
     end
 end
 
