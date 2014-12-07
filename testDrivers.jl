@@ -15,9 +15,22 @@ function testLCDriver(settingsFile::String,headerKeywordList::String,chunkNum::I
 #    settingsFile = "CREATIVE_STATION_SETTINGS.txt"
 #    chunkNum = 1
     mySettings = initializeSettings(settingsFile,headerKeywordList,chunkNum)
+    
+    statusIO = open("STATUS.txt","r+")
 
     allKIDs = dir_KIDs(mySettings.fits_dir)
     firstKID = allKIDs[1]
 
-    lightcurveDriver(mySettings,firstKID,allKIDs,chunkNum)
+    lightcurveDriver(mySettings,firstKID,allKIDs,chunkNum,statusIO)
+end
+
+
+function testMain()
+
+    chunkNum = 1
+    settingsFile = "CREATIVE_STATION_SETTINGS.txt"
+    statusFile = "STATUS_1.txt"
+    headerKeywordList = "headerKeyWordList.txt"
+
+    main(chunkNum,settingsFile,statusFile,headerKeywordList)
 end
