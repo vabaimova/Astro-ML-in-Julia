@@ -15,6 +15,7 @@
 
 using FITSIO
 using Stats
+using HDF5,JLD
 
 function dir_KIDs(dir_name::String)
     #=
@@ -89,11 +90,13 @@ function get_qflat_lc(kid::String,file_list)
     then returns the elements of file_list that contained kid
     =#
     all_fits_for_kid = file_list[find(map((x) -> contains(x,kid),file_list))]
+    println(file_list)
 
     tot_time = Float64[]
     tot_flux = Float64[]
 
     for fits_file in all_fits_for_kid
+#        println(fits_file)
 
         time,flux = get_lc_segment(fits_file)
         ## append time to tot_time
@@ -136,7 +139,7 @@ function test_fits_dir(dir::String)
     name will be used to generate warning message
     =#
     try readdir(dir)
-        print("Found FITs directory!")
+        println("Found FITs directory!")
     catch
         println("Please check SETTINGS.txt file")
         ## this will halt execution of the entire program with a helpful message
@@ -181,9 +184,10 @@ function lightcurveDriver(settings,currKID::String,allKIDs,chunkNum::Int64)
     endInd = endof(allKIDs)
 
     ## Get the name of the flc_file
-    flc_file_name = settings.flc_dir * "/flc_" * string(chunkNum) * ".csv"
+    flc_file_name = settings.flc_dir * "flc_" * string(chunkNum) * ".csv"
     flc_file = open(flc_file_name,"a")
 
+    fits_list = map((x) -> settings.fits_dir * "/"  * x, fits_list)
 
     for i = currInd:endInd
         ## Set the current kid
