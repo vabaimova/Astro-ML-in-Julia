@@ -16,7 +16,7 @@ function testLCDriver(settingsFile::String,headerKeywordList::String,chunkNum::I
 #    chunkNum = 1
     mySettings = initializeSettings(settingsFile,headerKeywordList,chunkNum)
 
-    allKIDs = dir_KIDs(settings.fits_dir)
+    allKIDs = dir_KIDs(mySettings.fits_dir)
     firstKID = allKIDs[1]
 
     lightcurveDriver(mySettings,firstKID,allKIDs,chunkNum)
