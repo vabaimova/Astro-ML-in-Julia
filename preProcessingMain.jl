@@ -72,12 +72,17 @@ end
 function initializeSettings(settingsFile::String,keywordListFile::String,chunkNum::Int64)
 
     ## Make sure that a settings file exists
-    try f = open(settingsFile,"r")
+    try f = open(settingsFile)
         ## The file exists so proceed to read it
-        settings = readdlm(f,String,comment_char=':')
+#        settings = readdlm(f,String,comments=true,comment_char=':')
+        settings = readdlm(f,String,skipstart=10)
+
+        ## Get the header keywords
+        keyword_list = readHeaderKeywords(keywordListFile)
+
         ## Create a settings object that contains the data
         ## found in SETTINGS.txt
-        mySettings = Settings(settings[1],settings[2],settings[3],settings[4])
+        mySettings = Settings(settings[1],settings[2],settings[3],settings[4],keyword_list)
     
         ## Check to make sure that the directory names end with "/"
         mySettings.fits_dir = checkDirEnd(mySettings.fits_dir)
@@ -89,8 +94,6 @@ function initializeSettings(settingsFile::String,keywordListFile::String,chunkNu
         ## to include the chunk number
         mySettings.fits_dir = mySettings.fits_dir * string(chunkNum)
     
-        ## Get the header keywords
-        mySettings.keyword_list = readHeaderKeywords(keywordListFile)
 
         return mySettings
 
