@@ -113,7 +113,8 @@ function main(chunkNum::Int64,settingsFile::String,statusFile::String)
         currKID = firstKID
 
         ## Create a status file
-        statusFile = open("STATUS.txt","w")
+        statusFileName = "STATUS_" * chunkNum * ".txt"
+        statusFile = open(statusFileName,"w")
    end
 
 #   println("Status file: ", statusFile)
