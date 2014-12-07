@@ -1,7 +1,7 @@
 #=
     lightcurveFuncs
     Copyright © 2014 Mark Wells <mwellsa@gmail.com>
-
+        and Vera Abaimova <stormseecker@gmail.com>
     Distributed under terms of the MIT license.
 
     function list:
@@ -15,7 +15,7 @@
 
 using FITSIO
 using Stats
-using HDF5,JLD
+using HDF5, JLD
 
 function dir_KIDs(dir_name::String)
     #=
@@ -90,7 +90,6 @@ function get_qflat_lc(kid::String,file_list)
     then returns the elements of file_list that contained kid
     =#
     all_fits_for_kid = file_list[find(map((x) -> contains(x,kid),file_list))]
-    println(file_list)
 
     tot_time = Float64[]
     tot_flux = Float64[]
@@ -210,7 +209,7 @@ function lightcurveDriver(settings,currKID::String,allKIDs,chunkNum::Int64)
         dkurt = kurtosis(dflux)
 
         ## Write out an hdf5 file with time, qflux, dflux
-        rlc_file = settings.rlc_dir * kid * "jld"
+        rlc_file = settings.rlc_dir * kid * ".jld"
         save(rlc_file, "time", time, "qflux", qflux, "dflux", dflux)
 
         ## Write out to the lc feature file
