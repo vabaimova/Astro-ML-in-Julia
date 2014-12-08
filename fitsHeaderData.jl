@@ -130,6 +130,7 @@ function headerDriver(settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
         println(typeof(kid))
 
         head_data = headerDataForKID(kid,settings)
+        head_data = reshape(head_data,1,length(head_data))
         writecsv(header_file,head_data)
         flush(header_file)
 
