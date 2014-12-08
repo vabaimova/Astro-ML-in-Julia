@@ -29,6 +29,20 @@ end
 
 
 function combineHeaderFeatures(settings)
+    ## Create an array to hold all the header features
+    headerFeatures = Any[]
+
+    ## get a list of all the header features files in the given directory
+    featureFiles = readdir(settings.header_dir)
+
+    ## Go through all the files and append the features of the list
+    for file in featureFiles 
+        f = open(file)
+        data = readcsv(f)
+
+        append!(headerFeatures,data)
+
+    end
 
 end
 
