@@ -112,7 +112,7 @@ function create_chunk_copies(source::String,destination::String,chunks::Int64)
         make_if_needed(out_dir)
     
         #create source file paths
-        println("Mapping source files for chunk ",i)
+        println("\nMapping source files for chunk ",i)
         source_files = map((x) -> source * x, files)
         println("Mapping destination files for chunk ",i)
         dest_files = map((x) -> out_dir * x, files)
