@@ -27,16 +27,19 @@ function dir_KIDs(dir_name::String)
 
     fits_files = readdir(dir_name)          #returns all the files from dir_name
 
-    
     kids = String[]                         #initialize an empty string array
     temp_kid = ""                           #this will be used to compare kids
 
     for file in fits_files
-        kid = file[5:13]                    #extract the 9 digit id number
-        if kid != temp_kid
-            append!(kids,[kid])
+        try kid = file[5:13]                    #extract the 9 digit id number
+            
+            if kid != temp_kid
+                append!(kids,[kid])
+            end
+            temp_kid = kid
+        catch
+            println("Unexpected file in source directory: ",file)
         end
-        temp_kid = kid
     end
 
     println("Discovered ",length(kids)," unique Kepler ID numbers")
