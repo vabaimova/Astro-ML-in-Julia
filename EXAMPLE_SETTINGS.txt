@@ -9,8 +9,8 @@
 :features of header data: 
 :status file directory (eventually parent directory of fits dir): 
 :==Start reading here==
-/home/CREATIVE_STATION/fits/
-/home/CREATIVE_STATION/rlc/
-/home/CREATIVE_STATION/flc/
-/home/CREATIVE_STATION/header/
-/home/CREATIVE_STATION/fits/
+/home/YOUR_COMPUTER/fits/
+/home/YOUR_COMPUTER/rlc/
+/home/YOUR_COMPUTER/flc/
+/home/YOUR_COMPUTER/header/
+/home/YOUR_COMPUTER/fits/
