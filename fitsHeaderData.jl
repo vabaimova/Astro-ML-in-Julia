@@ -127,7 +127,7 @@ function headerDriver(settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
     for i = currInd:endInd
         ## Set the current kid
         kid = allKIDs[i]
-        println(typeof(kid))
+#        println(typeof(kid))
 
         head_data = headerDataForKID(kid,settings)
         head_data = reshape(head_data,1,length(head_data))
