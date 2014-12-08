@@ -54,30 +54,37 @@ function get_lc_segment(fitsfile::String)
     ## read out the length of the arrays
     naxis2 = fits_read_keyword(f,"NAXIS2")
     length=int(naxis2[1])
-
+    
     ## initialize arrays to be populated
     time = Array(Float64,length)
     flux = Array(Float64,length)
     ## read out the values
     ## column 1 is time 
-    fits_read_col(f,Float64,1,1,1,time)
-    ## column 8 is pdcsap_flux
-    fits_read_col(f,Float64,8,1,1,flux)
+    try fits_read_col(f,Float64,1,1,1,time)
+        ## column 8 is pdcsap_flux
+        fits_read_col(f,Float64,8,1,1,flux)
 
-    ## close the fits file
-    fits_close_file(f)
+        ## close the fits file
+        fits_close_file(f)
 
-    ## find the indices of time that are well behaved
-    good_inds = find(isfinite(time))
-    time = time[good_inds]
-    flux = flux[good_inds]
+        ## find the indices of time that are well behaved
+        good_inds = find(isfinite(time))
+        time = time[good_inds]
+        flux = flux[good_inds]
 
-    ## find the indices of time that are well behaved
-    good_inds = find(isfinite(flux))
-    time = time[good_inds]
-    flux = flux[good_inds]
+        ## find the indices of time that are well behaved
+        good_inds = find(isfinite(flux))
+        time = time[good_inds]
+        flux = flux[good_inds]
 
-    return time,flux
+        return time,flux
+
+    catch
+        println("Bad fitsfile: ",fitsfile)
+        time = Float64[]
+        flux = Float64[]
+        return time,flux
+    end
 end
 
 
@@ -188,7 +195,8 @@ function lightcurveDriver(settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
     flc_file_name = settings.flc_dir * "flc_" * string(chunkNum) * ".csv"
     flc_file = open(flc_file_name,"a")
 
-    fits_list = map((x) -> settings.fits_dir * "/"  * x, fits_list)
+#    fits_list = map((x) -> settings.fits_dir * "/"  * x, fits_list)
+    fits_list = map((x) -> settings.fits_dir * x, fits_list)
 
 
     for i = currInd:endInd
