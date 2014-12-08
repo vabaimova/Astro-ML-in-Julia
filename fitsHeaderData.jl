@@ -84,7 +84,7 @@ function headerDataForKID(kid::String,settings)
     ## Get the header data for the file
     headerData = getHeaderData(file,settings)
 
-    println("Data: ", headerData)
+#    println("Data: ", headerData)
 
     return headerData
 end
