@@ -81,7 +81,7 @@ function initializeSettings(settingsFile::String,keywordListFile::String,chunkNu
     try f = open(settingsFile)
         ## The file exists so proceed to read it
 #        settings = readdlm(f,String,comments=true,comment_char=':')
-        settings = readdlm(f,String,skipstart=10)
+        settings = readdlm(f,String,skipstart=11)
 
         ## Get the header keywords
         keyword_list = readHeaderKeywords(keywordListFile)
