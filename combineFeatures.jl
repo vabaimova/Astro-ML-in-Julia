@@ -70,6 +70,8 @@ function combineHeaderFeatures(settings)
         end
     end
 
+    ## Sort the features by the Kepler ID number
+    headerFeatures = sortData(headerFeatures)
 
     combinedHeaderFeaturesFile = open("combinedHeaderFeaturesFile.csv","w")
 
