@@ -46,7 +46,28 @@ end
 
 
 
-function combineHeaderFeatures(settings)
+function getImputedDataFromHeaderFeatFile(settings,file::String)
+
+    ## Make sure the file name has the full path
+    file = settings.header_dir * file
+    println(file)
+    
+    f = open(file)
+    data = readcsv(f)
+    
+    ## Close file once we have the data from it
+    close(file)
+
+    ## Impute the data to deal with missing values
+    data = imputeHeaderData(data)
+
+    return data
+
+end
+
+
+
+function combineHeaderFeatures(settings,fileToWriteName::String)
 
     ## Get a list of all the header features files in the given directory
     featureFiles = readdir(settings.header_dir)
@@ -54,18 +75,21 @@ function combineHeaderFeatures(settings)
     ## Go through all the files and vcat the features of the list
     for file in featureFiles 
 
-        f = open(file)
-        data = readcsv(f)
-
-        ## Impute the data to deal with missing values
-        data = imputeHeaderData(data)
-
         ## If the file is the first features file being processed
         if file == featureFiles[1]
+
+            ## Get the data from the file
+            data = getImputedDataFromHeaderFeatFile(settings,file)
+
             ## Create an array to hold all the header features
             ## and add the first batch of data so that we can perform vcat()
             headerFeatures = data
+#            println("Header features for first file: ", headerFeatures)
         else
+
+            ## Get the data from the file
+            data = getImputedDataFromHeaderFeatFile(settings,file)
+
             headerFeatures = vcat(headerFeatures,data)
         end
     end
@@ -73,7 +97,7 @@ function combineHeaderFeatures(settings)
     ## Sort the features by the Kepler ID number
     headerFeatures = sortData(headerFeatures)
 
-    combinedHeaderFeaturesFile = open("combinedHeaderFeaturesFile.csv","w")
+    combinedHeaderFeaturesFile = open(fileName,"w")
 
 
 end
