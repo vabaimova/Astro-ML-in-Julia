@@ -12,18 +12,12 @@ using PyCall
 
 
 
-function combineLCFeatures(settings)
-
-end
-
-
-
-function imputeHeaderData(headerData)
+function imputeData(data)
     ## Create imputer
     imp = preprocessing.Imputer(missing_values=-9999,strategy="median",axis=0)
     ## Replace the missing values (represented by -9999)
     ## with the median of the column
-    imputedData = imp[:fit_transform](headerData)
+    imputedData = imp[:fit_transform](data)
     
     return imputedData
 
@@ -31,46 +25,47 @@ end
 
 
 
-function sortData(features)
+function sortData(kids,features)
     ## Sort by Kepler ID number to make future merging easier
     ## Get the sorted indices for the first column after transforming the
     ## Kepler ID strings to integers
-    indices = sortperm(features[:,1],by=int)
+    indices = sortperm(kids,by=int)
 
     ## Reindex features with the new sorted indices
     features = features[indices,:]
 
-    return features
+    ## Reindex the kids
+    kids = kids[indices]
+
+    return kids,features
 
 end
 
 
 
-function getImputedDataFromHeaderFeatFile(settings,file::String)
+function getDataFromFile(dir::String,file::String)
 
     ## Make sure the file name has the full path
-    file = settings.header_dir * file
-    println(file)
+    file = dir * file
+#    println(file)
     
-    f = open(file)
-    data = readcsv(f)
+    data = readcsv(file,ASCIIString)
+    kids = data[:,1]
+#    println("kids=",kids[1])
+    data = data[:,2:end]
+#    println(typeof(data[1]))
+#    println(data[1])
     
-    ## Close file once we have the data from it
-    close(file)
-
-    ## Impute the data to deal with missing values
-    data = imputeHeaderData(data)
-
-    return data
+    return kids,data
 
 end
 
 
 
-function combineHeaderFeatures(settings,fileToWriteName::String)
+function combineFeatures(feat_dir::String,fileToWriteName::String)
 
     ## Get a list of all the header features files in the given directory
-    featureFiles = readdir(settings.header_dir)
+    featureFiles = readdir(feat_dir)
 
     ## Go through all the files and vcat the features of the list
     for file in featureFiles 
@@ -79,26 +74,38 @@ function combineHeaderFeatures(settings,fileToWriteName::String)
         if file == featureFiles[1]
 
             ## Get the data from the file
-            data = getImputedDataFromHeaderFeatFile(settings,file)
+            kids,data = getDataFromFile(feat_dir,file)
 
             ## Create an array to hold all the header features
             ## and add the first batch of data so that we can perform vcat()
-            headerFeatures = data
-#            println("Header features for first file: ", headerFeatures)
+            features = data
+#            println("Header features KID: ", kids[1])
+#            println("Header features for first file: ", headerFeatures[1,:])
         else
 
             ## Get the data from the file
-            data = getImputedDataFromHeaderFeatFile(settings,file)
+            kids,data = getDataFromFile(feat_dir,file)
 
-            headerFeatures = vcat(headerFeatures,data)
+            features = vcat(features,data)
         end
     end
 
+#    println("=====================================")
+
     ## Sort the features by the Kepler ID number
-    headerFeatures = sortData(headerFeatures)
+    kids,features = sortData(kids,features)
+    features = imputeData(features)
 
-    combinedHeaderFeaturesFile = open(fileName,"w")
 
+#    println("Sorted header features KID: ", kids[1])
+#    println("Sorted header features: ", headerFeatures[1,:])
+
+    #combinedHeaderFeaturesFile = open(fileToWriteName,"w+")
+
+    #println(combinedHeaderFeaturesFile)
+    ## Write the file
+    #writecsv(combinedHeaderFeaturesFile,headerFeatures)
+    writecsv(fileToWriteName,features)
 
 end
 
@@ -118,5 +125,6 @@ end
 
 
 function combinationDriver()
+
 
 end
