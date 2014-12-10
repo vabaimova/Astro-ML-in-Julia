@@ -1,0 +1,62 @@
+% vim:ft=tex:
+%
+\documentclass[12pt]{article}
+
+\title{
+	Clustering of Cross-Referenced Astronomical Data Sets
+}
+\author{
+	Vera Abaimova --- \texttt{stormseecker@gmail.com} \\ 
+        Mark Wells --- \texttt{mwellsa@gmail.com}
+}
+
+\date{December 9, 2014}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The large amount of astronomical data that is now available from a multitude of missions creates a need for machine learning methods that can analyze it and glean information about our universe.
+One challenge in particular is to analyze data about the same observations made by different missions, \textit{i.e.}, analyze cross-referenced data, especially data in different formats.
+One such format is time series data provided by the \textit{Kepler} mission, which results in additional difficulties.
+Our proposed method extracts features from cross-referenced data sets, including time series data, and applies a hierarchical clustering model in order to aid stellar classification.
+
+\end{abstract}
+
+\section{Introduction} % (fold)
+\label{sec:Introduction}
+
+% section Introduction (end)
+
+\section{Related Work} % (fold)
+\label{sec:Related Work}
+
+% section Related Work (end)
+
+\section{Problem Definition} % (fold)
+\label{sec:Problem Definition}
+
+% Some of the below values are now different thanks to our additional work
+
+The input of our clustering problem is a list of $x_i,_j$ where $x_i$ is the star object, numbered from 1 to 222,158 and $j$ is the feature, numbered from 1 to 14.
+Our feature space includes features such as $fuv\_mag$, $nuv\_flux$, and $kepmag$, among others, where $fuv\_mag$ is the far ultraviolet magnitude, $nuv\_flux$ is the near ultraviolet, and $kepmag$ is a measure of brightness of an object in the \textit{Kepler} pass band.
+
+Our output is a list of $x_i,_j \in C_k$ where $C$ is cluster and $k$ denotes cluster number. 
+
+% section Problem Definition (end)
+
+\section{Method} % (fold)
+\label{sec:Method}
+
+% section Method (end)
+
+\section{Experiments} % (fold)
+\label{sec:Experiments}
+
+% section Experiments (end)
+
+\section{Summary} % (fold)
+\label{sec:Summary}
+
+% section Summary (end)
+
+\end{document}
