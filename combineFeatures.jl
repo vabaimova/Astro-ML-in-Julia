@@ -62,7 +62,7 @@ end
 
 
 
-function combineFeatures(feat_dir::String,fileToWriteName::String)
+function combineFeatures(feat_dir::String)
 
     ## Get a list of all the header features files in the given directory
     featureFiles = readdir(feat_dir)
@@ -72,59 +72,85 @@ function combineFeatures(feat_dir::String,fileToWriteName::String)
 
         ## If the file is the first features file being processed
         if file == featureFiles[1]
-
             ## Get the data from the file
-            kids,data = getDataFromFile(feat_dir,file)
-
-            ## Create an array to hold all the header features
-            ## and add the first batch of data so that we can perform vcat()
-            features = data
-#            println("Header features KID: ", kids[1])
-#            println("Header features for first file: ", headerFeatures[1,:])
+            kids,features = getDataFromFile(feat_dir,file)
         else
-
             ## Get the data from the file
-            kids,data = getDataFromFile(feat_dir,file)
-
-            features = vcat(features,data)
+            tempkids,tempfeats = getDataFromFile(feat_dir,file)
+            kids = vcat(kids,tempkids)
+            features = vcat(features,tempfeats)
         end
     end
-
-#    println("=====================================")
 
     ## Sort the features by the Kepler ID number
     kids,features = sortData(kids,features)
     features = imputeData(features)
 
-
-#    println("Sorted header features KID: ", kids[1])
-#    println("Sorted header features: ", headerFeatures[1,:])
-
-    #combinedHeaderFeaturesFile = open(fileToWriteName,"w+")
-
-    #println(combinedHeaderFeaturesFile)
-    ## Write the file
-    #writecsv(combinedHeaderFeaturesFile,headerFeatures)
-    writecsv(fileToWriteName,features)
-
+    return kids,features
 end
 
 
 
 function sortGalex(galexFile::String)
+    data = readcsv(galexFile,String)
+    kids = data[:,end]
 
+    lastcoloffeatures = size(data)[2]-1
+
+    features = data[:,1:lastcoloffeatures]
+    features = float(features)
+
+    indices = sortperm(kids,by=int)
+    kids = kids[indices]
+    features = features[indices,:]
+    return kids,features
 end
 
 
 
-function combineAllFeatures(settings)
-    # Don't forget to do galex stuff here
 
+function matchAndCombine(kids1,feats1,kids2,feats2)
+    ## find the indices of the unique elements for kids1
+    indices = map((x) -> findfirst(kids1,x),kids1)
+    indices = unique(indices)
+    kids1 = kids1[indices]
+    feats1 = feats1[indices,:]
+
+    ## find the indices of the unique elements for kids2
+    indices = map((x) -> findfirst(kids2,x),kids2)
+    indices = unique(indices)
+    kids2 = kids2[indices]
+    feats2 = feats2[indices,:]
+
+    indices = map((x) -> findfirst(kids1,x),kids2)
+    indices = find(indices)
+    kids2 = kids2[indices]
+    feats2 = feats2[indices,:]
+
+    indices = map((x) -> findfirst(kids2,x),kids1)
+    indices = find(indices)
+    kids1 = kids1[indices]
+    feats1 = feats1[indices,:]
+
+    println(size(kids1))
+    println(size(kids2))
+    @assert(kids1 == kids2) 
+
+    feats = hcat(feats1,feats2)
+    return kids1,feats
 end
 
 
 
 function combinationDriver()
+    settings = initializeSettings("CREATIVE_STATION_SETTINGS.txt","headerKeyWordList.txt",1)
+    headkids,headfeats = combineFeatures(settings.header_dir)
+    lckids,lcfeats = combineFeatures(settings.flc_dir)
+#    galexkids,galexfeats = sortGalex("galexData.csv")
 
-
+    kids,feats = matchAndCombine(headkids,headfeats,lckids,lcfeats)
+#    kids,feats = matchAndCombine(kids,feats,galexkids,galexfeats)
+    writecsv("/home/CREATIVE_STATION/kepler_ML/cross_ref_feats.csv",feats)
 end
+
+combinationDriver()
