@@ -11,7 +11,6 @@ using PyCall
 @pyimport sklearn.preprocessing as preprocessing
 
 
-
 function imputeData(data)
     ## Create imputer
     imp = preprocessing.Imputer(missing_values=-9999,strategy="median",axis=0)
@@ -49,6 +48,7 @@ function getDataFromFile(dir::String,file::String)
     file = dir * file
 #    println(file)
     
+    println("reading: ",file)
     data = readcsv(file,ASCIIString)
     kids = data[:,1]
 #    println("kids=",kids[1])
@@ -86,6 +86,12 @@ function combineFeatures(feat_dir::String)
     kids,features = sortData(kids,features)
     features = imputeData(features)
 
+
+    array = hcat(kids,features)
+    lastcol = size(array)[2]-1
+    file = feat_dir[1:lastcol] * ".csv"
+    println("writing: ",file)
+    writecsv(file,array)
     return kids,features
 end
 
@@ -108,29 +114,22 @@ end
 
 
 
-
 function matchAndCombine(kids1,feats1,kids2,feats2)
-    ## find the indices of the unique elements for kids1
-    indices = map((x) -> findfirst(kids1,x),kids1)
-    indices = unique(indices)
-    kids1 = kids1[indices]
-    feats1 = feats1[indices,:]
+    inds = indexin(unique(kids1),kids1)
+    kids1 = kids1[inds]
+    feats1 = feats1[inds,:]
 
-    ## find the indices of the unique elements for kids2
-    indices = map((x) -> findfirst(kids2,x),kids2)
-    indices = unique(indices)
-    kids2 = kids2[indices]
-    feats2 = feats2[indices,:]
+    inds = indexin(unique(kids2),kids2)
+    kids2 = kids2[inds]
+    feats2 = feats2[inds,:]
 
-    indices = map((x) -> findfirst(kids1,x),kids2)
-    indices = find(indices)
-    kids2 = kids2[indices]
-    feats2 = feats2[indices,:]
+    inds = findin(kids1,kids2)
+    kids1 = kids1[inds]
+    feats1 = feats1[inds,:]
 
-    indices = map((x) -> findfirst(kids2,x),kids1)
-    indices = find(indices)
-    kids1 = kids1[indices]
-    feats1 = feats1[indices,:]
+    inds = findin(kids2,kids1)
+    kids2 = kids2[inds]
+    feats2 = feats2[inds,:]
 
     println(size(kids1))
     println(size(kids2))
@@ -143,14 +142,31 @@ end
 
 
 function combinationDriver()
-    settings = initializeSettings("CREATIVE_STATION_SETTINGS.txt","headerKeyWordList.txt",1)
-    headkids,headfeats = combineFeatures(settings.header_dir)
-    lckids,lcfeats = combineFeatures(settings.flc_dir)
-#    galexkids,galexfeats = sortGalex("galexData.csv")
+    println("reading settings")
+    settings = initializeSettings("SETTINGS_studio.txt","headerKeyWordList.txt",1)
+#    println("combining head features")
+#    headkids,headfeats = combineFeatures(settings.header_dir)
+#    println("combining lc features")
+#    lckids,lcfeats = combineFeatures(settings.flc_dir)
+    file = "flcFeatsComb.csv"
+    println("reading: ",file)
+    array = readcsv(file,String)
+    flckids = array[:,1]
+    flcfeats = array[:,2:end]
 
-    kids,feats = matchAndCombine(headkids,headfeats,lckids,lcfeats)
-#    kids,feats = matchAndCombine(kids,feats,galexkids,galexfeats)
-    writecsv("/home/CREATIVE_STATION/kepler_ML/cross_ref_feats.csv",feats)
+    file = "headFeatsComb.csv"
+    println("reading: ",file)
+    array = readcsv(file,String)
+    headkids = array[:,1]
+    headfeats = array[:,2:end]
+
+    println("begun match and combine head and lc")
+    kids,feats = matchAndCombine(headkids,headfeats,flckids,flcfeats)
+
+    println("reading galex")
+    galexkids,galexfeats = sortGalex("galexData.csv")
+
+    println("begun match and combine with galex")
+    kids,feats = matchAndCombine(kids,feats,galexkids,galexfeats)
+    writecsv("/home/mark/kepler_ML/cross_ref_feats.csv",feats)
 end
-
-combinationDriver()
