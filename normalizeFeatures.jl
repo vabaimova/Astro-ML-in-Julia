@@ -25,7 +25,7 @@ end
 
 
 function createNormalizedTable()
-    kids,feats = getFeatures("cross_ref_feats.csv")
+    kids,feats = getFeatures("cross_ref_feats_plus_kid.csv")
 
     numSamps = size(feats)[1]
     numFeats = size(feats)[2]
@@ -36,7 +36,7 @@ function createNormalizedTable()
 
     table = hcat(kids,rfeats)
     println(size(table))
-    writecsv("norm_cross_ref_feats.csv",table)
+    writecsv("norm_cross_ref_feats_plus_kid.csv",table)
 end
 
 createNormalizedTable()
