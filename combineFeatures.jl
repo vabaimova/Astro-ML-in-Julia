@@ -143,7 +143,8 @@ end
 
 function combinationDriver()
     println("reading settings")
-    settings = initializeSettings("SETTINGS_studio.txt","headerKeyWordList.txt",1)
+#    settings = initializeSettings("SETTINGS_studio.txt","headerKeyWordList.txt",1)
+    settings = initializeSettings("CREATIVE_STATION_SETTINGS.txt","headerKeyWordList.txt",1)
 #    println("combining head features")
 #    headkids,headfeats = combineFeatures(settings.header_dir)
 #    println("combining lc features")
@@ -168,5 +169,8 @@ function combinationDriver()
 
     println("begun match and combine with galex")
     kids,feats = matchAndCombine(kids,feats,galexkids,galexfeats)
-    writecsv("/home/mark/kepler_ML/cross_ref_feats.csv",feats)
+#    writecsv("/home/mark/kepler_ML/cross_ref_feats.csv",feats)
+
+    table = hcat(kids,feats)
+    writecsv("/home/CREATIVE_STATION/kepler_ML/cross_ref_feats_plus_kid.csv",table)
 end
