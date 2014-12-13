@@ -172,5 +172,5 @@ function combinationDriver()
 #    writecsv("/home/mark/kepler_ML/cross_ref_feats.csv",feats)
 
     table = hcat(kids,feats)
-    writecsv("/home/CREATIVE_STATION/kepler_ML/cross_ref_feats_plus_kid.csv",table)
+    writecsv("/home/CREATIVE_STATION/Astro-ML-in-Julia/cross_ref_feats_plus_kid.csv",table)
 end
