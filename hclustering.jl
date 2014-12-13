@@ -11,7 +11,7 @@ using PyPlot
 @pyimport scipy.cluster.hierarchy as hier
 
 function getNormKidsFeats()
-    tab = readcsv("norm_cross_ref_feats.csv",String)
+    tab = readcsv("norm_cross_ref_feats_plus_kid.csv",String)
     kids = tab[:,1]
     feats = float(tab[:,2:end])
     return kids,feats
