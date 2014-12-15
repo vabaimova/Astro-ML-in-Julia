@@ -55,6 +55,11 @@ function testing()
     ylabel("Number of Members",fontsize=15)
     title("Membership of Hierarchical Clustering",fontsize=17)
 
+    ## For future reference
+    ## leaves_list is a list that actually contains the list of
+    ## integers that are the number of members
+    println(hier.leaves_list(link_matrix))
+
     
 
 end
