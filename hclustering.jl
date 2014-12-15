@@ -6,9 +6,9 @@
 =#
 
 using PyCall
-using PyPlot
 @pyimport scipy.spatial.distance as dist
 @pyimport scipy.cluster.hierarchy as hier
+using PyPlot
 
 function getNormKidsFeats()
     tab = readcsv("norm_cross_ref_feats_plus_kid.csv",String)
@@ -18,12 +18,10 @@ function getNormKidsFeats()
 end
 
 function testing()
+    println("begun process")
     kids,feats = getNormKidsFeats()
-    n = integer(sqrt(length(kids)))
 
-    sample = feats[randperm(n),:]
-
-    dist_matrix = dist.pdist(sample,"euclidean")
+    dist_matrix = dist.pdist(feats,"euclidean")
     link_matrix = hier.linkage(dist_matrix)
 
     color_thres = 0.9*maximum(link_matrix[:,2])
