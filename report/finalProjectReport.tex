@@ -2,6 +2,7 @@
 %
 \documentclass[12pt]{article}
 \usepackage{natbib}
+\usepackage{graphicx}
 
 \title{
 	Clustering of Cross-Referenced Astronomical Data Sets
@@ -106,6 +107,27 @@ The final section is a summary of the problem and our experimental results, alon
 
 \section{Related Work} % (fold)
 \label{sec:Related Work}
+Clustering is an unsupervised method of machine learning, which means that one of its inherent advantages is that it does not require targeted labels.
+This is helpful in astrophysics, where most of the data is unclassified (at least initially) and thus does not have available labels to create targets for methods such as classification.
+
+One instance where this is useful is in the study of time series data, as described by \cite{wang}.
+There are a variety of time series clustering algorithms, all of which are fairly effective at dealing with moderate-length time series.
+There are some drawbacks, however.
+Hierarchical clustering, for example, is one of the most widely used approaches, but it is limited to small time series data sets.
+K-means is faster than hierarchical, but it is impractical since the clusters have to be preassigned.
+Missing values can also be problematic when dealing with time series data \citep{wang}. 
+
+The greatest advantage of clustering is that it can handle incredibly large data sets \citep{januzaj}.
+An interesting improvement on the different clustering methods would be to apply them to small subsets of data and then combining the results. 
+This would be an exaple of an application of distributed data mining.
+
+Traditional data mining analysis is performed on data in a single set.
+The advantage of distributed data mining is that data can be gathered from multiple data sets \citep{McConnell}.
+This includes multiple data sets with different feature spaces.
+
+Distributed data mining can handle large data sets very well, but an additional advantage is that it deals effectively with privacy concerns stemming from attempting to integrate all data into a central location. Furthermore, integrating large data sets together is computationally expensive, so distributed methods are ideal for these situations as described by \cite{McConnell2}. 
+
+Distributed data mining combines several data sets to improve prediction models. 
 
 % section Related Work (end)
 
@@ -129,15 +151,128 @@ Our output is a list of $x_i,_j \in C_k$ where $C$ is cluster and $k$ denotes cl
 
 \section{Experiments} % (fold)
 \label{sec:Experiments}
+\subsection{Data Sets} % (fold)
+\label{sub:Data Sets}
+
+The \textit{Kepler} spacecraft was launched on March 7, 2009.
+\textit{Kepler}'s intended mission was to discover Earth-sized exoplanets (planets outside of our solar system).
+By taking extremely precise photometric measurements of a predetermined region of the sky continuously for approximately 4~years, scientists were able to employ the transit method to identify exoplanet candidates.
+The transit method involves analyzing the lightcurves (the brightness of a star over time) and looking for dips.
+These dips in the lightcurve could be due to a planet passing in front of its host star.
+
+With its impressive dataset on over 100,000 targets, the \textit{Kepler} data set provides an excellent opportunity to look at stellar variability (the changing of a star's brightness over time).
+\textit{Kepler} was designed to be photometrically sensitive, so it is an excellent tool for this purpose.
+The time domain nature of the dataset is spectacular, approximately 4~years of data with a 30~minute cadence for each star.
+This poses a problem on how to extract features out of the times series data, which we address later in this section.
+
+The \textit{Galaxy Evolution Explorer} (\textit{GALEX}) is a space telescope that observes in the ultraviolet region of the electromagnetic spectrum.
+Its primary mission was to investigate star formation at an early redshift.
+Launched on April 28th, 2003, \textit{GALEX} has been observing for over a decade and has amassed a large archive of data on many different objects.
+The ultraviolet emission is often used as an indication of a star's activity.
+Stellar activity can be inferred by the presence of starspots on the star's surface.
+These are regions where magnetic fields suppress surface convection.
+
+After performing a cross matching of these two data sets, we found 222,158 potential targets.
+Not all of these targets have time series data however, so we further pared our data set by limiting it to stars that had lightcurve data.
+This resulted in a total of 20,840 stars.
+
+Each star had multiple FITS files that contained part of that star's lightcurve, so we had a total of 349,424 files from which to extract information.
+Those files also contained information in their headers, which provided values such as the stellar radius, metallicity, effective temperature, and the like.
+Furthermore, these files, which came from \textit{Kepler}, also contained some information from the \textit{SDSS} mission.
+The features that come from this mission include a variety of band magnitudes and color bands.
+
+% subsection Data Sets (end)
+
+\subsection{Experimental Results} % (fold)
+\label{sub:Experimental Results}
+As we outlined in the midterm report, our preliminary attempts to cluster the data were not particularly successfull.
+We first used the K-Means method, but this approach had a few problems.
+While the approach can handle large data sets, K-Means only works well when the data can be clustered into a medium number of clusters and if those clusters are very well defined.
+Considering the complexity of the physical objects that our data describes, it is easy to see why they would not necessarily fit into well defined clusters.
+As can be seen in Figure~\ref{fig:cluster_26_membership}, cluster 4 has an incredibly large population in relation to the rest of the clusters.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{classBargraph.png}
+    \caption{A bar graph illustrating the percent membership breakdown per cluster obtained from K-Means.}
+    \label{fig:cluster_26_membership}
+    
+\end{figure}
+
+After seeing the results of our preliminary clustering attempts we decided to go with hierarchical clustering instead.
+Hierarchical clustering is easily able to handle large data sets and large numbers of clusters but the drawback is that it is a computationally expensive method.
+We discovered this while attempting to cluster our entire data set.
+As a result we decided to first cluster a sample of our data set, which we obtained by taking the square root of the size of our data set, turning it into an integer, and then getting a random permutation, thus picking a sample of size 144 that would be representative of the data set as a whole.
+
+We clustered our sample data set twice, producing dendrograms Figure~\ref{fig:Dend_samp_20} and Figure~\ref{fig:Dend_samp_50}. 
+Each of these times represents the number of levels at which we cut off the dendrogram. Figure~\ref{fig:Dend_samp_20} shows the clusters at 20 levels of the hierarchy and Figure~\ref{fig:Dend_samp_50} shows the clusters at 50 levels.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{dend_rand_samp_20_levels.png}
+    \caption{A dendrogram of a random sample of our data set, clustered up to 20 levels.}
+    \label{fig:Dend_samp_20}
+    
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{dend_pop_samp.png}
+    \caption{A dendrogram of a random sample of our data set, clustered up to 50 levels.}
+    \label{fig:Dend_samp_50}
+    
+\end{figure}
+
+We also managed to cluster our entire data set.
+The process took several hours and the resulting dendrogram, clustered up to 50 levels, can be seen in Figure~\ref{fig:Dend_all_50}.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{dend_50_full.png}
+    \caption{A dendrogram of our entire data set, clustered up to 50 levels.}
+    \label{fig:Dend_all_50}
+    
+\end{figure}
+
+In all of our dendrograms one can see a large U bar in the middle of the figure.
+This is particularly interesting, as it indicates that a large number of clusters can trace their lineage back to a few select overarching clusters.
+On the leftmost side of our figures there is a small group of clusters that breaks off quite early.
+This indicates that these groups of stars are particularly distinct from the rest and the clusters that contain them should be fairly homogenous. 
+
+Overall hierarchical clustering seems to perform better than K-Means.
+As can be seen from Figure~\ref{fig:Bar_Samp}, the membership of the clusters is much more evenly spread for hierarchical clustering than for K-Means.
+Considering that we have more features for this final clustering method than we did for our preliminary pass (at the time we had not yet implemented our time series processing), this seems a good indication that hierarchical is the superior method in this case.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{bar_pop_samp.png}
+    \caption{A bar graph of a sample of our data, showing the number of members in each cluster.}
+    \label{fig:Bar_Samp}
+    
+\end{figure}
+
+
+Because of the large data set size we expected that the stars would be clustered fairly evenly, so our final method, hierarchical, seems to be a much better method to use for this problem.
+We must also consider the type of objects that we are working with.
+Some types of stars have wildly distinct behavior and so, for example, the features we extracted from their lightcurves would almost immediately identify them as one particular group that belongs in a separate cluster.
+If our data set had been comprised of just these kinds of stars then K-Means would have been a good method to use since the resulting clusters would no doubt have been very distinct and easy to separate.
+Our real data set, however, also included stars that were perhaps not so distinguishable from one another.
+In fact, these are the kinds of stars that were in the majority, so the potential overlap for clusters for these types of stars is great, meaning that our clustering method would need to be able to handle potential overlap.
+Hierarchical seemed to be up to the challenge and greatly exceeded the performatnce of K-Means.
+
+% subsection Experimental Results (end)
+
 
 % section Experiments (end)
 
 \section{Summary} % (fold)
 \label{sec:Summary}
-
+Our research problem involved taking an incredibly large astronomical data set and clustering the stellar objects it described.
 % section Summary (end)
 
+\newpage
+\section{Group Contribution} % (fold)
+\label{sec:Group Contribution}
+Both group members contributed fairly equally to this project.
+While Mark contributed more of the astronomical knowledge and took the lead of data acquisition and the data preprocessing method, Vera took the lead on the clustering of the data.
+% section Group Contribution (end)
 
+\newpage
 \bibliographystyle{plainnat}
 \bibliography{sources}
 \end{document}
