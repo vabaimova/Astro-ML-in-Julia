@@ -1,0 +1,50 @@
+\subsection{Preprocessing}
+\label{sub:Preprocessing}
+Our data from the \textit{Kepler} spacecraft is stored in \textit{FITS} files (Flexible Image Transport System).
+These files can contain \emph{headers} and \emph{tables}.
+We also obtained data from the \textit{Galex} mission.
+All of this data was processed using \emph{Julia} (\url{http://julialang.org/}).
+In order to expedite this process we broke up the dataset and distributed it over several systems.
+
+\subsubsection{Header Information}
+\label{ssub:Header Information}
+For our data set the headers will contain some physical properties that we will be interested in using and the tables will contain the time series data.
+These keywords, shown in Table~\ref{tab:keywords}, are provided by the \textit{Kepler} team.
+\begin{table}
+    \begin{center}
+    \begin{tabular}{|c|}
+        \hline
+        KEPLERID\\
+        GMAG\\
+        RMAG\\
+        IMAG\\
+        ZMAG\\
+        D51MAG\\
+        JMAG\\
+        HMAG\\
+        KMAG\\
+        KEPMAG\\
+        GRCOLOR\\
+        JKCOLOR\\
+        GKCOLOR\\
+        TEFF\\
+        LOGG\\
+        FEH\\
+        EBMINUSV\\
+        AV\\
+        RADIUS\\
+        \hline
+    \end{tabular}
+    \end{center}
+    \caption{A list of the keywords that were extracted from the headers of the FITS files.}
+    \label{tab:keywords}
+\end{table}
+
+\subsubsection{Time Series}
+\label{ssub:Time Series}
+A single FITS file will contain the lightcurve of one quarter.
+A quarter is one season, i.e. three months.
+This is because the spacecraft will have to rotate itself to keep its solar panels directed toward the sun.
+This means that for one star we will can have as many as 16~separate files that will need to be stitched together.
+The time series data consists of two separate vectors: time and flux.
+The flux mean level will be different for each quarter.
