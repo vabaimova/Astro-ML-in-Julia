@@ -3,6 +3,7 @@
 \documentclass[12pt]{article}
 \usepackage{natbib}
 \usepackage{graphicx}
+\usepackage{url}
 
 \title{
 	Clustering of Cross-Referenced Astronomical Data Sets
@@ -146,6 +147,94 @@ Our output is a list of $x_i,_j \in C_k$ where $C$ is cluster and $k$ denotes cl
 
 \section{Method} % (fold)
 \label{sec:Method}
+\subsection{Preprocessing}
+\label{sub:Preprocessing}
+Our data from the \textit{Kepler} spacecraft is stored in \textit{FITS} files (Flexible Image Transport System).
+These files can contain \emph{headers} and \emph{tables}.
+We also obtained data from the \textit{Galex} mission.
+All of this data was processed using \emph{Julia} (\url{http://julialang.org/}).
+In order to expedite this process we broke up the dataset and distributed it over several systems.
+
+\subsubsection{Header Information}
+\label{ssub:Header Information}
+For our data set the headers will contain some physical properties that we will be interested in using and the tables will contain the time series data.
+These keywords, shown in Table~\ref{tab:keywords}, are provided by the \textit{Kepler} team.
+These files provided values such as the stellar radius, metallicity, effective temperature, and the like.
+Furthermore, these files, which came from \textit{Kepler}, also contained some information from the \textit{SDSS} mission.
+The features that come from this mission include a variety of band magnitudes and color bands.
+
+\begin{table}
+    \begin{center}
+    \begin{tabular}{|c|}
+        \hline
+        KEPLERID\\
+        GMAG\\
+        RMAG\\
+        IMAG\\
+        ZMAG\\
+        D51MAG\\
+        JMAG\\
+        HMAG\\
+        KMAG\\
+        KEPMAG\\
+        GRCOLOR\\
+        JKCOLOR\\
+        GKCOLOR\\
+        TEFF\\
+        LOGG\\
+        FEH\\
+        EBMINUSV\\
+        AV\\
+        RADIUS\\
+        \hline
+    \end{tabular}
+    \end{center}
+    \caption{A list of the keywords that were extracted from the headers of the FITS files.}
+    \label{tab:keywords}
+\end{table}
+
+\subsubsection{Time Series}
+\label{ssub:Time Series}
+
+A single FITS file will contain the lightcurve of one quarter.
+A quarter is one season, i.e. three months.
+This file breakup is because the spacecraft will have to rotate itself to keep its solar panels directed toward the sun.
+This means that for one star we will can have as many as 16~separate files that will need to be stitched together, resulting in a total of 349,424 files.
+The time series data consists of two separate vectors: time and flux.
+
+The flux mean level will be different for each quarter, so when we stitched the lightcurves together, we removed the mean level from each quarter.
+This novel process is known as a Quarterly-Flat.
+We repeated the process, only this time removing the mean from the lightcurves by day, meaning we performed a Daily-Flat.
+We then extracted the variance, kurtosis, and  skewness of each type of flatted lightcurve.
+The benefits of performing the flattening process that it attenuates signals with periods greater than a day from the lightcurves.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{Raw_lightcurve.png}
+    \caption{The lightcurve once it has been stitched together.}
+    \label{fig:Raw_lc}
+    
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{Segment_of_lightcurve.png}
+    \caption{An 8.26 day segment of a raw lightcurve, meant to illustrate the inherent structure that is difficult to see in Figure~\ref{fig:Raw_lc}.}
+    \label{fig:Seg_lc}
+    
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{Qflat_lightcurve.png}
+    \caption{The lightcurve after it has been Quarterly-Flatted.}
+    \label{fig:Q_lc}
+    
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{Dflat_lightcurve.png}
+    \caption{The lightcurve after it has been Daily-Flatted.}
+    \label{fig:D_lc}
+    
+\end{figure}
 
 % section Method (end)
 
@@ -154,20 +243,12 @@ Our output is a list of $x_i,_j \in C_k$ where $C$ is cluster and $k$ denotes cl
 \subsection{Data Sets} % (fold)
 \label{sub:Data Sets}
 
-The \textit{Kepler} spacecraft was launched on March 7, 2009.
-\textit{Kepler}'s intended mission was to discover Earth-sized exoplanets (planets outside of our solar system).
-By taking extremely precise photometric measurements of a predetermined region of the sky continuously for approximately 4~years, scientists were able to employ the transit method to identify exoplanet candidates.
-The transit method involves analyzing the lightcurves (the brightness of a star over time) and looking for dips.
-These dips in the lightcurve could be due to a planet passing in front of its host star.
-
 With its impressive dataset on over 100,000 targets, the \textit{Kepler} data set provides an excellent opportunity to look at stellar variability (the changing of a star's brightness over time).
 \textit{Kepler} was designed to be photometrically sensitive, so it is an excellent tool for this purpose.
 The time domain nature of the dataset is spectacular, approximately 4~years of data with a 30~minute cadence for each star.
-This poses a problem on how to extract features out of the times series data, which we address later in this section.
+This poses a problem on how to extract features out of the times series data, which we address in Section~\ref{sec:Method}.
 
 The \textit{Galaxy Evolution Explorer} (\textit{GALEX}) is a space telescope that observes in the ultraviolet region of the electromagnetic spectrum.
-Its primary mission was to investigate star formation at an early redshift.
-Launched on April 28th, 2003, \textit{GALEX} has been observing for over a decade and has amassed a large archive of data on many different objects.
 The ultraviolet emission is often used as an indication of a star's activity.
 Stellar activity can be inferred by the presence of starspots on the star's surface.
 These are regions where magnetic fields suppress surface convection.
@@ -175,11 +256,7 @@ These are regions where magnetic fields suppress surface convection.
 After performing a cross matching of these two data sets, we found 222,158 potential targets.
 Not all of these targets have time series data however, so we further pared our data set by limiting it to stars that had lightcurve data.
 This resulted in a total of 20,840 stars.
-
-Each star had multiple FITS files that contained part of that star's lightcurve, so we had a total of 349,424 files from which to extract information.
-Those files also contained information in their headers, which provided values such as the stellar radius, metallicity, effective temperature, and the like.
-Furthermore, these files, which came from \textit{Kepler}, also contained some information from the \textit{SDSS} mission.
-The features that come from this mission include a variety of band magnitudes and color bands.
+Additional information on our data set is found in Section~\ref{sec:Method}.
 
 % subsection Data Sets (end)
 
@@ -189,6 +266,8 @@ As we outlined in the midterm report, our preliminary attempts to cluster the da
 We first used the K-Means method, but this approach had a few problems.
 While the approach can handle large data sets, K-Means only works well when the data can be clustered into a medium number of clusters and if those clusters are very well defined.
 Considering the complexity of the physical objects that our data describes, it is easy to see why they would not necessarily fit into well defined clusters.
+This could also be partly due to the fact that this preliminary pass did not include time series data, which is an important part of our data set.
+The additional features that were acquired from the lightcurves could have made K-Means clustering more effective, but that effectiveness would probably have been marginal.
 As can be seen in Figure~\ref{fig:cluster_26_membership}, cluster 4 has an incredibly large population in relation to the rest of the clusters.
 
 \begin{figure}
@@ -254,16 +333,35 @@ If our data set had been comprised of just these kinds of stars then K-Means wou
 Our real data set, however, also included stars that were perhaps not so distinguishable from one another.
 In fact, these are the kinds of stars that were in the majority, so the potential overlap for clusters for these types of stars is great, meaning that our clustering method would need to be able to handle potential overlap.
 Hierarchical seemed to be up to the challenge and greatly exceeded the performatnce of K-Means.
-
 % subsection Experimental Results (end)
-
-
 % section Experiments (end)
+
 
 \section{Summary} % (fold)
 \label{sec:Summary}
-Our research problem involved taking an incredibly large astronomical data set and clustering the stellar objects it described.
+Our research problem involved taking an incredibly large astronomical data set, which included time series lightcurves, and clustering the stellar objects it described.
+The first clustering method that we attempted was K-Means clustering which performed poorly on our data set.
+The final method we chose was hierarchical clustering, which performed much better on than K-Means.
+
+In Section~\ref{sec:Related Work}, we discussed literature that pertained to distributed data mining.
+We did not use this approach for the actual clustering of our data, but we did apply its principles to the data preprocessing.
+Preprocessing the data took the longest time of any step of our data analysis, but we were able to mitigate the issue by making our preprocessing distributed.
+This is discussed in further detail in Section~\ref{sec:Method}.
+The challenge with using distributed clustering is that it would be difficult to implement with certain types of algorithms.
+Since distributed clustering relies to finding local representatives that are then sent to a global site and clustered again, a method like K-Means would be less challenging to implement that hierarchical.
+
+We have learned a lot in the making of this project.
+The first thing is that we learned more about the Julia language, which we used almost exclusively.
+While similar to Python, Julia has many different features and has proven overall to be a better language for the processing of scientific data.
+We also learned a lot about how to handle large amounts data and how to write code to accomodate it.
+The great majority of our time was spent on writing code to preprocess our data and including safeguards so that should our program crash, we would be able to continue right where we left off.
+
+A potential line of inquiry for the future could be to make distributed clustering work for hierarchical.
+In addition, in the future we might try accuracy testing based on a small, labeled subset of the data set we used for this project.
+Other potential work could include implementing other types of clustering methods in order to compare their performance.
+
 % section Summary (end)
+
 
 \newpage
 \section{Group Contribution} % (fold)
