@@ -77,7 +77,7 @@ These fall into the following camps: supervised learning, unsupervised learning,
 We will only be concerning ourselves with unsupervised learning, specifically clustering, and we will also take a look at distributed data mining.
 
 Clustering is an extremely popular unsupervised method in the field of astrophysics.
-Distributed data mining is an approach that is useful for large data sets, among other qualities, so it will be reviewed as well.
+Distributed data mining is an approach that is useful for, but not limited to, large data sets. 
 All of these methods will be discussed in further detail as part of the related work in current literature.
 % subsection Related work overview (end)
 
@@ -90,7 +90,7 @@ Before we could do that though, we performed a process called flattening, which 
 After the flattening process we extracted the variance, skewness, and kurtosis of each lightcurve and included the resulting values in our feature space.
 
 After the data preprocessing we performed an analysis.
-Our chosen baseline method is hierarchical clustering, which perfomed better than the K-Means clustering we performed for our preliminary data analysis. 
+Our chosen baseline method is hierarchical clustering, which performed better than the K-Means clustering we performed for our preliminary data analysis. 
 More in depth explanations of both our methods and experimental results are further outlined in Section~\ref{sec:Method} and Section~\ref{sec:Experiments}, respectively.
 % subsection Proposed Method (end)
 
@@ -98,9 +98,9 @@ More in depth explanations of both our methods and experimental results are furt
 \subsection{Overview} % (fold)
 \label{sub:Overview}
 In Section~\ref{sec:Related Work} we will give a short survey of the literature which outlines existing approaches to processing time series data and working with large data sets.
-The next section, Section~\ref{sec:Problem Definition} will a formal, mathematical definition of our problem, including the input and the expected output.
-Section~\ref{sec:Method} is where we will go more in depth, first about the baseline methods we tried in our preliminary analysis of the data, and then about our final data analysis.
-Section~\ref{sec:Experiments} will contain the information about our data sets, our experimental results, both for our preliminary and final passes, and an analysis of our final results.
+The next section, Section~\ref{sec:Problem Definition} will include a formal, mathematical definition of our problem, including the input and the expected output.
+Section~\ref{sec:Method} is where we will go more in depth about our process, first about the baseline methods we tried in our preliminary analysis of the data, and then about our final data analysis.
+Section~\ref{sec:Experiments} will contain information about our data sets, our experimental results, both for our preliminary and final passes, and an analysis of our final results.
 The final section is a summary of the problem and our experimental results, along with what we have learned from this project.
 % subsection Overview (end)
 
@@ -108,8 +108,8 @@ The final section is a summary of the problem and our experimental results, alon
 
 \section{Related Work} % (fold)
 \label{sec:Related Work}
-Clustering is an unsupervised method of machine learning, which means that one of its inherent advantages is that it does not require targeted labels.
-This is helpful in astrophysics, where most of the data is unclassified (at least initially) and thus does not have available labels to create targets for methods such as classification.
+Clustering is an unsupervised method of machine learning, which means that one of its inherent advantages is that it does not require ground truth labels.
+This is helpful in astrophysics, where most of the data is unclassified (at least initially) and thus does not have available labels to train the model.
 
 One instance where this is useful is in the study of time series data, as described by \cite{wang}.
 There are a variety of time series clustering algorithms, all of which are fairly effective at dealing with moderate-length time series.
@@ -120,7 +120,7 @@ Missing values can also be problematic when dealing with time series data \citep
 
 The greatest advantage of clustering is that it can handle incredibly large data sets \citep{januzaj}.
 An interesting improvement on the different clustering methods would be to apply them to small subsets of data and then combining the results. 
-This would be an exaple of an application of distributed data mining.
+This would be an example of an application of distributed data mining.
 
 Traditional data mining analysis is performed on data in a single set.
 The advantage of distributed data mining is that data can be gathered from multiple data sets \citep{McConnell}.
@@ -138,7 +138,7 @@ Distributed data mining combines several data sets to improve prediction models.
 % Some of the below values are now different thanks to our additional work
 
 The input of our clustering problem is a list of $x_i,_j$ where $x_i$ is the star object, numbered from 1 to 20,840 and $j$ is the feature, numbered from 1 to 29.
-Our feature space includes features such as $fuv\_mag$, $nuv\_flux$, and $kepmag$, among others, where $fuv\_mag$ is the far ultraviolet magnitude, $nuv\_flux$ is the near ultraviolet, and $kepmag$ is a measure of brightness of an object in the \textit{Kepler} pass band.
+Our feature space includes features such as $fuv\_mag$, $nuv\_mag$, and $kepmag$, among others, where $fuv\_mag$ is the far ultraviolet magnitude, $nuv\_mag$ is the near ultraviolet magnitude, and $kepmag$ is a measure of brightness of an object in the \textit{Kepler} pass band.
 
 Our output is a list of $x_i,_j \in C_k$ where $C$ is cluster and $k$ denotes cluster number. 
 
@@ -153,7 +153,7 @@ Our data from the \textit{Kepler} spacecraft is stored in \textit{FITS} files (F
 These files can contain \emph{headers} and \emph{tables}.
 We also obtained data from the \textit{Galex} mission.
 All of this data was processed using \emph{Julia} (\url{http://julialang.org/}).
-In order to expedite this process we broke up the dataset and distributed it over several systems.
+In order to expedite the preprocessing we broke up the dataset and distributed it over several systems.
 
 \subsubsection{Header Information}
 \label{ssub:Header Information}
@@ -203,10 +203,10 @@ This means that for one star we will can have as many as 16~separate files that 
 The time series data consists of two separate vectors: time and flux.
 
 The flux mean level will be different for each quarter, so when we stitched the lightcurves together, we removed the mean level from each quarter.
-This novel process is known as a Quarterly-Flat.
-We repeated the process, only this time removing the mean from the lightcurves by day, meaning we performed a Daily-Flat.
-We then extracted the variance, kurtosis, and  skewness of each type of flatted lightcurve.
-The benefits of performing the flattening process that it attenuates signals with periods greater than a day from the lightcurves.
+We refer to this process as a Quarterly-Flat.
+We repeated the process, only this time removing the mean from the lightcurves by day, performing a novel process called a Daily-Flat.
+We then extracted the variance, kurtosis, and skewness of each type of flatted lightcurve.
+The benefits of performing the flattening process is that it attenuates signals with periods greater than a day from the lightcurves.
 
 \begin{figure}
     \includegraphics[width=\textwidth]{Raw_lightcurve.png}
@@ -262,7 +262,7 @@ Additional information on our data set is found in Section~\ref{sec:Method}.
 
 \subsection{Experimental Results} % (fold)
 \label{sub:Experimental Results}
-As we outlined in the midterm report, our preliminary attempts to cluster the data were not particularly successfull.
+As we outlined in the midterm report, our preliminary attempts to cluster the data were not particularly successful.
 We first used the K-Means method, but this approach had a few problems.
 While the approach can handle large data sets, K-Means only works well when the data can be clustered into a medium number of clusters and if those clusters are very well defined.
 Considering the complexity of the physical objects that our data describes, it is easy to see why they would not necessarily fit into well defined clusters.
@@ -312,7 +312,7 @@ The process took several hours and the resulting dendrogram, clustered up to 50 
 In all of our dendrograms one can see a large U bar in the middle of the figure.
 This is particularly interesting, as it indicates that a large number of clusters can trace their lineage back to a few select overarching clusters.
 On the leftmost side of our figures there is a small group of clusters that breaks off quite early.
-This indicates that these groups of stars are particularly distinct from the rest and the clusters that contain them should be fairly homogenous. 
+This indicates that these groups of stars are particularly distinct from the rest and the clusters that contain them should be fairly homogeneous. 
 
 Overall hierarchical clustering seems to perform better than K-Means.
 As can be seen from Figure~\ref{fig:Bar_Samp}, the membership of the clusters is much more evenly spread for hierarchical clustering than for K-Means.
@@ -332,7 +332,7 @@ Some types of stars have wildly distinct behavior and so, for example, the featu
 If our data set had been comprised of just these kinds of stars then K-Means would have been a good method to use since the resulting clusters would no doubt have been very distinct and easy to separate.
 Our real data set, however, also included stars that were perhaps not so distinguishable from one another.
 In fact, these are the kinds of stars that were in the majority, so the potential overlap for clusters for these types of stars is great, meaning that our clustering method would need to be able to handle potential overlap.
-Hierarchical seemed to be up to the challenge and greatly exceeded the performatnce of K-Means.
+Hierarchical seemed to be up to the challenge and greatly exceeded the performance of K-Means.
 % subsection Experimental Results (end)
 % section Experiments (end)
 
@@ -341,24 +341,25 @@ Hierarchical seemed to be up to the challenge and greatly exceeded the performat
 \label{sec:Summary}
 Our research problem involved taking an incredibly large astronomical data set, which included time series lightcurves, and clustering the stellar objects it described.
 The first clustering method that we attempted was K-Means clustering which performed poorly on our data set.
-The final method we chose was hierarchical clustering, which performed much better on than K-Means.
+The final method we chose was hierarchical clustering, which performed much better than K-Means.
 
 In Section~\ref{sec:Related Work}, we discussed literature that pertained to distributed data mining.
 We did not use this approach for the actual clustering of our data, but we did apply its principles to the data preprocessing.
 Preprocessing the data took the longest time of any step of our data analysis, but we were able to mitigate the issue by making our preprocessing distributed.
 This is discussed in further detail in Section~\ref{sec:Method}.
 The challenge with using distributed clustering is that it would be difficult to implement with certain types of algorithms.
-Since distributed clustering relies to finding local representatives that are then sent to a global site and clustered again, a method like K-Means would be less challenging to implement that hierarchical.
+Since distributed clustering relies on finding local representatives that are then sent to a global site and clustered again, a method like K-Means would be less challenging to implement than hierarchical clustering.
 
 We have learned a lot in the making of this project.
 The first thing is that we learned more about the Julia language, which we used almost exclusively.
-While similar to Python, Julia has many different features and has proven overall to be a better language for the processing of scientific data.
-We also learned a lot about how to handle large amounts data and how to write code to accomodate it.
+While similar to Python, Julia has many different features and has proved overall to be a better language for the processing of scientific data.
+We also learned a lot about how to handle large amounts data and how to write code to accommodate it.
 The great majority of our time was spent on writing code to preprocess our data and including safeguards so that should our program crash, we would be able to continue right where we left off.
 
-A potential line of inquiry for the future could be to make distributed clustering work for hierarchical.
+A potential line of inquiry for the future could be to make distributed clustering work for hierarchical clustering.
 In addition, in the future we might try accuracy testing based on a small, labeled subset of the data set we used for this project.
 Other potential work could include implementing other types of clustering methods in order to compare their performance.
+Also, analyzing tight clusters and potentially classifying them.
 
 % section Summary (end)
 
@@ -367,7 +368,7 @@ Other potential work could include implementing other types of clustering method
 \section{Group Contribution} % (fold)
 \label{sec:Group Contribution}
 Both group members contributed fairly equally to this project.
-While Mark contributed more of the astronomical knowledge and took the lead of data acquisition and the data preprocessing method, Vera took the lead on the clustering of the data.
+While Mark contributed more of the astronomical knowledge and took the lead of data acquisition and preprocessing, Vera took the lead on the clustering of the data.
 % section Group Contribution (end)
 
 \newpage
