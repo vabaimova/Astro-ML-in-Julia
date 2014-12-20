@@ -27,6 +27,10 @@ function testing()
     inds = randperm(nkids)[1:n]
     sample = feats[inds,:]
 
+
+    # Include connectivity constraints to only merge the nearest neighbors
+
+
     dist_matrix = dist.pdist(sample,"euclidean")
     link_matrix = hier.linkage(dist_matrix)
 
@@ -56,9 +60,8 @@ function testing()
     title("Membership of Hierarchical Clustering",fontsize=17)
 
     ## For future reference
-    ## leaves_list is a list that actually contains the list of
-    ## integers that are the number of members
-    println(hier.leaves_list(link_matrix))
+    ## leaves_list returns a list of leaf ids 
+#    println("Leaves list: ", hier.leaves_list(link_matrix))
 
     
 
