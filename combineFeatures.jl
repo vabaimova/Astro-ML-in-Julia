@@ -98,12 +98,12 @@ end
 
 
 function sortGalex(galexFile::String)
-    data = readcsv(galexFile,String)
-    kids = data[:,end]
+    data = readcsv(galexFile)
 
-    lastcoloffeatures = size(data)[2]-1
+    kids = int(data[:,end])
+    kids = map((x) -> lpad(x,9,"0"),kids)
 
-    features = data[:,1:lastcoloffeatures]
+    features = data[:,1]
     features = float(features)
 
     indices = sortperm(kids,by=int)
