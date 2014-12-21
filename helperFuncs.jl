@@ -59,6 +59,78 @@ function getNormKidsFeats()
 end
 
 
+## Get data from a file, specifically when combining it 
+function getDataFromFile(dir::String,file::String)
+
+    ## Make sure the file name has the full path
+    file = dir * file
+#    println(file)
+    
+    println("reading: ",file)
+    data = readcsv(file,ASCIIString)
+    kids = data[:,1]
+#    println("kids=",kids[1])
+    data = data[:,2:end]
+#    println(typeof(data[1]))
+#    println(data[1])
+    
+    return kids,data
+
+end
+
+
+##############################################################
+## Process and Sort Data
+
+## Impute data to handle missing values
+function imputeData(data)
+    ## Create imputer
+    imp = preprocessing.Imputer(missing_values=-9999,strategy="median",axis=0)
+    ## Replace the missing values (represented by -9999)
+    ## with the median of the column
+    imputedData = imp[:fit_transform](data)
+    
+    return imputedData
+
+end
+
+
+## Sort the data by Kepler ID number
+function sortData(kids,features)
+    ## Sort by Kepler ID number to make future merging easier
+    ## Get the sorted indices for the first column after transforming the
+    ## Kepler ID strings to integers
+    indices = sortperm(kids,by=int)
+
+    ## Reindex features with the new sorted indices
+    features = features[indices,:]
+
+    ## Reindex the kids
+    kids = kids[indices]
+
+    return kids,features
+
+end
+
+
+## Sort the Galex data by Kepler ID
+function sortGalex(galexFile::String)
+    data = readcsv(galexFile)
+
+    kids = int(data[:,end])
+    kids = map((x) -> lpad(x,9,"0"),kids)
+
+    features = data[:,1]
+    features = float(features)
+
+    indices = sortperm(kids,by=int)
+    kids = kids[indices]
+    features = features[indices,:]
+    return kids,features
+end
+
+
+
 ##############################################################
 ## Testing Directories
 
