@@ -7,6 +7,7 @@
 
 ## A program to test the drivers that preprocess the data
 
+include("helperFuncs.jl")
 include("lightcurveFuncs.jl")
 include("fitsHeaderData.jl")
 include("preProcessingMain.jl")
