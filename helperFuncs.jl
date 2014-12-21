@@ -12,7 +12,7 @@
 using FITSIO
 
 #############################################################
-## Get desired data
+## Get desired data (not directly related to a singular purpose)
 
 
 ## Get the KIDs that are found in the directory of FITS files
@@ -47,6 +47,21 @@ function dir_KIDs(dir_name::String)
 
     println("Discovered ",length(kids)," unique Kepler ID numbers")
     return kids
+end
+
+
+## This function takes a directory name and a Kepler ID number
+## and returns the first file instance for that KID
+function firstInstOfKID(dirName::String, kid::String)
+
+    ## Get the file names from the given directory
+    files = readdir(dirName)
+
+    ## Find the first instance of the Kepler ID in the file directory
+    instance = files[findfirst(map((x) -> contains(x,kid),files))]
+    
+    return instance
+
 end
 
 
