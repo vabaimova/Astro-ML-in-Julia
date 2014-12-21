@@ -3,6 +3,9 @@ Astro-ML-in-Julia
 
 Using machine learning methods in Julia to analyze astronomical time series data.
 
+##V: What I've done today
+1. Created a helper function file and moved all helper functions from other files there
+
 ##Process
 1. Galex data stuff
 1. Split Data for Parallelization
