@@ -83,8 +83,6 @@ function create_chunk_copies(source::String,destination::String,chunks::Int64)
     destination will be the directory to save the chunk folders into
     =#
 
-
-
     ## Make sure destination and source directories has a "/" on the end
     destination = checkDirEnd(destination)
     make_if_needed(destination)
@@ -93,7 +91,8 @@ function create_chunk_copies(source::String,destination::String,chunks::Int64)
     ## setting up progress meter
     println("Setting up progress bar")
     n = length(readdir(source))
-    p = Progress(n,2,"Copying FITs files: ",40) # minumum update interval: 2 seconds
+    # minumum update interval: 2 seconds
+    p = Progress(n,2,"Copying FITs files: ",40) 
     
     create_chunk_files(source,chunks)
 
