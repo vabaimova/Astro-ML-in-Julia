@@ -13,39 +13,11 @@
         lightcurveDriver
 =#
 
+include("helperFuncs.jl")
+
 using FITSIO
 using Stats
 using HDF5, JLD
-
-function dir_KIDs(dir_name::String)
-    #=
-    this function will return all the KIDs that are within the given directory
-    uses the filenames (assumes the form of kplr#########-#############_llc.fits)
-    =#
-
-    println("Reading directory: " * dir_name)
-
-    fits_files = readdir(dir_name)          #returns all the files from dir_name
-
-    kids = String[]                         #initialize an empty string array
-    temp_kid = ""                           #this will be used to compare kids
-
-    for file in fits_files
-        try kid = file[5:13]                    #extract the 9 digit id number
-            
-            if kid != temp_kid
-                append!(kids,[kid])
-            end
-            temp_kid = kid
-        catch
-            println("Unexpected file in source directory: ",file)
-        end
-    end
-
-    println("Discovered ",length(kids)," unique Kepler ID numbers")
-    return kids
-end
-
 
 
 function get_lc_segment(fitsfile::String)
@@ -140,35 +112,6 @@ function do_dflat(time::Array{Float64},flux::Array{Float64},flat_period::Float64
     return flat_flux
 end
 
-
-
-function test_fits_dir(dir::String)
-    #=
-    Produces a warning message if directory does not exist
-    name will be used to generate warning message
-    =#
-    try readdir(dir)
-        println("Found FITs directory!")
-    catch
-        println("Please check SETTINGS.txt file")
-        ## this will halt execution of the entire program with a helpful message
-        throw("Could not find FITs directory!")
-    end
-end
-
-
-
-function make_if_needed(dir::String)
-    #=
-    Produces a warning message if directory does not exist
-    name will be used to generate warning message
-    =#
-    try readdir(dir)
-    catch
-        mkdir(dir)
-    end
-end
-  
 
 
 function lightcurveDriver(settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
