@@ -5,6 +5,8 @@
     Distributed under terms of the MIT license.
 =#
 
+include("helperFuncs.jl")
+
 using PyCall
 @pyimport scipy.spatial.distance as dist
 @pyimport scipy.cluster.hierarchy as hier
@@ -12,14 +14,6 @@ using PyCall
 @pyimport sklearn.cluster as cluster
 @pyimport sklearn.metrics as metrics
 using PyPlot
-
-
-function getNormKidsFeats()
-    tab = readcsv("norm_cross_ref_feats_plus_kid.csv",String)
-    kids = tab[:,1]
-    feats = float(tab[:,2:end])
-    return kids,feats
-end
 
 
 function performCluster(features,kVal,con_matrix)
@@ -54,13 +48,18 @@ function testVariousK(features,con_matrix)
     bestK = 0
 
     for i = 1:length(kList)
-        labels = performCluster(features,kList[i],con_matrix)
-        score = evaluateCluster(features,labels)
-        scores[i] = score
-        if score > maxscore
-            maxscore = score
-            println("Current max score: ", maxscore)
-            bestK = kList[i] 
+        try
+            labels = performCluster(features,kList[i],con_matrix)
+            score = evaluateCluster(features,labels)
+            scores[i] = score
+
+            ## Keep track of the best silhouette score
+            ## and the associated k value
+            if score > maxscore
+                maxscore = score
+                println("Current max score: ", maxscore)
+                bestK = kList[i] 
+            end
         end
     end
 
@@ -77,27 +76,7 @@ function testVariousK(features,con_matrix)
 end
 
 
-function createBarGraph(labels)
-    figure()
-    ## Get the unique label names for the x-axis
-    labelNames = unique(labels)
-    labelNames = sort(labelNames)
-    println("length of labelNames: ", length(labelNames))
-    println("labelNames: ", labelNames)
-
-    ## Get the counts for each label 
-    counts = hist(labels,length(labels))[2]
-    println("size of counts: ", length(counts))
-    println("counts: ", counts)
-
-    ## Graph it
-    width = .9 
-    bar(labelNames-width/2,counts,width=width)
-
-end
-
-
-function testing()
+function clusteringDriver()
     println("begun process")
     kids,feats = getNormKidsFeats()
 
@@ -135,30 +114,6 @@ function testing()
 
     createBarGraph(labels)
 
-#    a=figure()
-#    leaf_counts = R["ivl"]
-#    ## deal with items with ()
-#    pinds = find(map((x) -> contains(x,"("),leaf_counts))
-#    for index in pinds
-#        leaf_counts[index] = leaf_counts[index][2:end-1]
-#    end
-#
-#    lN = size(leaf_counts)[1]
-#    labels = int(linspace(1,lN,lN))
-#
-#    leaf_counts = int(leaf_counts)
-#
-#    bar(labels,leaf_counts)
-#    xlabel("Cluster",fontsize=15)
-#    ylabel("Number of Members",fontsize=15)
-#    title("Membership of Hierarchical Clustering",fontsize=17)
-
-    ## For future reference
-    ## leaves_list returns a list of leaf ids 
-#    println("Leaves list: ", hier.leaves_list(link_matrix))
-
-    
-
 end
 
-testing()
+clusteringDriver()
