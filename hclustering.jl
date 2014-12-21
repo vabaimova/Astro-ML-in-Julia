@@ -8,7 +8,11 @@
 using PyCall
 @pyimport scipy.spatial.distance as dist
 @pyimport scipy.cluster.hierarchy as hier
+@pyimport sklearn.neighbors.kneighbors_graph as kneighbors
+@pyimport sklearn.cluster as cluster
+@pyimport sklearn.metrics as metrics
 using PyPlot
+
 
 function getNormKidsFeats()
     tab = readcsv("norm_cross_ref_feats_plus_kid.csv",String)
@@ -16,6 +20,13 @@ function getNormKidsFeats()
     feats = float(tab[:,2:end])
     return kids,feats
 end
+
+
+function performCluster(features,kVal,con_matrix)
+    estimator = cluster.AgglomerativeClustering(n_clusters=kVal,connectivity=con_matrix)
+
+end
+
 
 function testing()
     println("begun process")
@@ -28,7 +39,12 @@ function testing()
     sample = feats[inds,:]
 
 
-    # Include connectivity constraints to only merge the nearest neighbors
+    ## Include connectivity constraints to only merge the nearest neighbors
+    numNeighbors = 30
+    connectivity_matrix = kneighbors(sample,numNeighbors)
+
+    ## Cluster by scikit-learn to get the cluster membership
+    estimator = cluster.AgglomerativeClustering( 
 
 
     dist_matrix = dist.pdist(sample,"euclidean")
@@ -67,4 +83,4 @@ function testing()
 
 end
 
-testing()
+#testing()

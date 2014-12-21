@@ -1,0 +1,32 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Januzaj et~al.(2004)Januzaj, Kriegel, and Pfeifle]{januzaj}
+Eshref Januzaj, Hans-Peter Kriegel, and Martin Pfeifle.
+\newblock Scalable density-based distributed clustering.
+\newblock In \emph{European Conference on Principles and Practice of Knowledge
+  Discovery in Databases}, 2004.
+
+\bibitem[McConnell and Skillicorn(2004)]{McConnell2}
+Sabine McConnell and David~B. Skillicorn.
+\newblock Building predictors from vertically distributed data.
+\newblock In \emph{Conference of the Centre for Advanced Studies on
+  Collaborative Research}, pages 150--162, 2004.
+
+\bibitem[McConnell and Skillicorn(2005)]{McConnell}
+Sabine~M. McConnell and David~B. Skillicorn.
+\newblock Distributed data mining for astrophysical datasets.
+\newblock In P.~L. Shopbell, M.~C. Britton, and R.~Ebert, editors,
+  \emph{Astronomical Data Analysis Software and Systems XIV}, pages 360--364,
+  2005.
+
+\bibitem[Wang et~al.(2006)Wang, Smith, and Hyndman]{wang}
+Xiaozhe Wang, Kate Smith, and Rob Hyndman.
+\newblock Characteristic-based clustering for time series data.
+\newblock \emph{Data Mining and Knowledge Discovery}, pages 335--364, 2006.
+
+\end{thebibliography}
