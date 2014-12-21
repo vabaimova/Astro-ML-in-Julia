@@ -8,20 +8,12 @@
     the feature space.
 =#
 
-function getFeatures(file::String)
-    table = readcsv(file,String)
-    kids = table[:,1]
-    feats = float(table[:,2:end])
-    return kids,feats
-end
-
 
 
 function rescaleFeat(array::Array{Float64})
     retval = (array - minimum(array))/(maximum(array)-minimum(array))
     return retval
 end
-
 
 
 function createNormalizedTable()

@@ -35,22 +35,6 @@ end
 
 
 
-## Make sure that the end of the directory name has a /
-## so that any operation that involved appending to the file path
-## would be carried out successfully
-function checkDirEnd(dirName::String)
-    
-    if dirName[end] != '/'
-        dirName = dirName * "/"
-#        println("Needed / addition")
-    end
-#    println(dirName)
-    return dirName
-
-end
-
-
-
 ## Read in header keyword list
 function readHeaderKeywords(keywordListFile::String)
     ## Make sure that a keyword file exists

@@ -10,11 +10,9 @@
 ## to one big file where each row is a star
 
 using FITSIO
-include("lightcurveFuncs.jl")
+include("helperFuncs.jl")
 
 function getHeaderData(fileName::String, settings)
-    
-#    println(fileName)
     fitsFile = FITS(fileName)
     header = readheader(fitsFile[1])
 
@@ -23,14 +21,10 @@ function getHeaderData(fileName::String, settings)
 
     for keyword in settings.keyword_list
         ## Access the value stored in the header at the keyword
-#        println("type of keyword list: ",typeof(settings.keyword_list))
-#        println("type of keyword: ", typeof(keyword))
-
         data = header[keyword]
 
         if keyword == "KEPLERID"
             data = @sprintf("%d",data)
-#            println(typeof(data))
             data = lpad(data,9,0)
         end
 
@@ -44,27 +38,7 @@ function getHeaderData(fileName::String, settings)
         append!(starData,[data])
     end
 
-#    Used for testing the accuracy of code
-#    println("Star Data: ", starData)
-    
     return starData
-end
-
-
-
-## This function takes a directory name and a Kepler ID number
-## and returns the first file instance for that KID
-function firstInstOfKID(dirName::String, kid::String)
-
-    ## Get the file names from the given directory
-    files = readdir(dirName)
-
-    ## Find the first instance of the Kepler ID in the file directory
-    instance = files[findfirst(map((x) -> contains(x,kid),files))]
-    
-#    println("instance: ", instance)
-    return instance
-
 end
 
 
@@ -74,7 +48,6 @@ end
 ## File that is for that KID
 ## The directory name is only used to pass on to the firstInstOFKID()
 function headerDataForKID(kid::String,settings)
-
     ## Get the file name of the first instance for the KID
     file = firstInstOfKID(settings.fits_dir,kid)
 
@@ -84,22 +57,9 @@ function headerDataForKID(kid::String,settings)
     ## Get the header data for the file
     headerData = getHeaderData(file,settings)
 
-#    println("Data: ", headerData)
-
     return headerData
 end
 
-
-
-## Testing function
-function for_to_test()
-    #kid = "006921913"
-    dirName = "/home/mark/lc_foo/"
-    keywordList = "headerKeyWordList.txt"
-
-    headerDataForKID(kid,dirName,keywordList)
-
-end
 
 
 function headerDriver(settings,allKIDs,chunkNum::Int64,statusIO::IOStream)
