@@ -78,7 +78,8 @@ end
 
 function clusteringDriver()
     println("begun process")
-    kids,feats = getNormKidsFeats()
+    normFeatsFile = "norm_cross_ref_feats_plus_kid.csv"
+    kids,feats = getFeatures(normFeatsFile)
 
     nkids = size(kids)[1]
     #n =  int(sqrt(nkids))

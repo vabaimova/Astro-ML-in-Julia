@@ -65,11 +65,11 @@ function firstInstOfKID(dirName::String, kid::String)
 end
 
 
-## Get the normalized features and the KIDs associated with them
-function getNormKidsFeats()
-    tab = readcsv("norm_cross_ref_feats_plus_kid.csv",String)
-    kids = tab[:,1]
-    feats = float(tab[:,2:end])
+## Get the features from the file indicated
+function getFeatures(file::String)
+    table = readcsv(file,String)
+    kids = table[:,1]
+    feats = float(table[:,2:end])
     return kids,feats
 end
 
