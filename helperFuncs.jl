@@ -74,7 +74,7 @@ function getFeatures(file::String)
 end
 
 
-## Get data from a file, specifically when combining it 
+## Get data from a file in a particular directory, specifically when combining it 
 function getDataFromFile(dir::String,file::String)
 
     ## Make sure the file name has the full path
@@ -177,6 +177,22 @@ function make_if_needed(dir::String)
     end
 end
   
+
+## Make sure that the end of the directory name has a /
+## so that any operation that involved appending to the file path
+## would be carried out successfully
+function checkDirEnd(dirName::String)
+    
+    if dirName[end] != '/'
+        dirName = dirName * "/"
+#        println("Needed / addition")
+    end
+#    println(dirName)
+    return dirName
+
+end
+
+
 
 ##############################################################
 ## Graphing
