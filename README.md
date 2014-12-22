@@ -39,3 +39,4 @@ Using machine learning methods in Julia to analyze astronomical time series data
 - look at projections of the feature space
     - plot the targets against two features
 - Clean up drivers and use SETTINGS.txt to make code work for any machine
+- Investigate artifacts on feature plots
