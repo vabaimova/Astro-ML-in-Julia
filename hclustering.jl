@@ -79,6 +79,36 @@ end
 ## Collects the KIDs that belong to each cluster and writes them out to a file
 ## Each line in the resulting file is one cluster's KIDs
 function clusterMembership(kids,labels)
+    lenProc = length(kids)
+    println("lenProc: ", lenProc)
+
+end
+
+
+## Plot the feature space given two features
+## The function parameter indices are column numbers
+## From 1 to 9, the number of features
+function plotFeatures(features,feat_1_ind::Int64,feat_2_ind::Int64)
+    x = features[:,feat_1_ind]
+    y = features[:,feat_2_ind]
+
+    clf()
+    scatter(x,y)
+    show()
+
+end
+
+function test_for_to()
+    normFeatsFile = "norm_cross_ref_feats_plus_kid.csv"
+    kids,feats = getFeatures(normFeatsFile)
+
+    feats_1 = int(linspace(1,15,15))
+    feats_2 = int(linspace(1,15,15))
+
+    combArr = hcat(feats_1,feats_2)
+
+    plotFeatures(feats,4,10)
+
 
 end
 
@@ -89,13 +119,15 @@ function clusteringDriver()
     kids,feats = getFeatures(normFeatsFile)
 
     nkids = size(kids)[1]
-    #n =  int(sqrt(nkids))
+    n =  int(sqrt(nkids))
 #    n = int(nkids/50)
-    n = nkids
+#    n = nkids
     println("The overall sample size is: ", n)
 
     inds = randperm(nkids)[1:n]
     sample = feats[inds,:]
+    sample_kids = kids[inds,:]
+#    println("sample_kids: ", sample_kids)
 
 
     ## Include connectivity constraints to only merge the nearest neighbors
@@ -124,4 +156,5 @@ function clusteringDriver()
 
 end
 
-clusteringDriver()
+#clusteringDriver()
+test_for_to()
