@@ -3,11 +3,6 @@ Astro-ML-in-Julia
 
 Using machine learning methods in Julia to analyze astronomical time series data.
 
-##V: What I've done today
-1. Created a helper function file and moved all helper functions from other files there
-
-##V: To Do
-1. Get cluster membership
 
 ##Process
 1. Galex data stuff
@@ -43,3 +38,4 @@ Using machine learning methods in Julia to analyze astronomical time series data
 - get membership of clustering results
 - look at projections of the feature space
     - plot the targets against two features
+- Clean up drivers and use SETTINGS.txt to make code work for any machine
