@@ -6,6 +6,7 @@
 =#
 
 Pkg.add("HDF5")
+Pkg.add("DSP")
 Pkg.add("ProgressMeter")
 Pkg.add("FITSIO")
 Pkg.add("Stats")
