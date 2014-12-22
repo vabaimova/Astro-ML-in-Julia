@@ -6,6 +6,9 @@ Using machine learning methods in Julia to analyze astronomical time series data
 ##V: What I've done today
 1. Created a helper function file and moved all helper functions from other files there
 
+##V: To Do
+1. Get cluster membership
+
 ##Process
 1. Galex data stuff
 1. Split Data for Parallelization

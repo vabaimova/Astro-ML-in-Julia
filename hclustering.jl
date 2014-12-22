@@ -76,6 +76,13 @@ function testVariousK(features,con_matrix)
 end
 
 
+## Collects the KIDs that belong to each cluster and writes them out to a file
+## Each line in the resulting file is one cluster's KIDs
+function clusterMembership(kids,labels)
+
+end
+
+
 function clusteringDriver()
     println("begun process")
     normFeatsFile = "norm_cross_ref_feats_plus_kid.csv"
