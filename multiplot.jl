@@ -93,7 +93,10 @@ function multiplot(time::Array{Float64},flux::Array{Float64},
     title_size=26
     font_size=18
 
-    plt.clf()
+#    plt.clf()
+    plt.ioff()
+
+    plt.figure(figsize=(11,8.5))
 
     ## lightcurve
     plt.subplot(311)
@@ -105,18 +108,9 @@ function multiplot(time::Array{Float64},flux::Array{Float64},
     plt.tick_params(axis="both",which="minor",labelsize=font_size)
     plt.plot(time,flux,"o",markersize=1,color="black")
 
-    
-#    ## power spectrum: 0 to 5
-#    plt.subplot(121)
-#    plt.xlim(0,5)
-#    plt.xlabel(L"frequency [days$^{-1}$]",fontsize=font_size)
-#    plt.ylabel(L"power [e$^{-}$/ s]",fontsize=font_size)
-#    plt.tick_params(axis="both",which="major",labelsize=font_size)
-#    plt.tick_params(axis="both",which="minor",labelsize=font_size)
-#    plt.plot(freq,power,color="black")
 
     ## power spectrum: 0 to 24 
-    ax = plt.subplot(312)
+    plt.subplot(312)
     plt.xlim(0.01,24)
     plt.xscale("log")
     plt.xlabel(L"frequency [days$^{-1}$]",fontsize=font_size)
@@ -135,10 +129,14 @@ function multiplot(time::Array{Float64},flux::Array{Float64},
     plt.tick_params(axis="both",which="minor",labelsize=font_size)
     plt.plot(tfold,flux,"o",markersize=1,color="black")
     
+
+
     plt.tight_layout()
     outputfile = outdir * title * ".png"
     savefig(outputfile, bbox_inches="tight")
+    plt.close()
     println("Saved: ",outputfile)
+
 
 end
 
