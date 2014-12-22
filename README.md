@@ -30,7 +30,13 @@ Using machine learning methods in Julia to analyze astronomical time series data
 ##Things TO DO:
 - Clean up the directory
 - make this documentation more comprehensive
-- create multiplots
-    - lightcurve
-    - periodgrams
-    - phasefolded light curve
+- ~~create multiplots~~
+    - ~~lightcurve~~
+    - ~~periodgrams~~
+    - ~~phasefolded light curve~~
+- finish multiplot driver
+    - title the plot with KID
+    - print the plots to a directory
+- get membership of clustering results
+- look at projections of the feature space
+    - plot the targets against two features
